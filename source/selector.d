@@ -97,6 +97,7 @@ module ui.selector;
 // Sub-sub instruments
 //   Mouse wheel                 // select instrument  // scroll up-down
 //   Right-Button + Mouse wheel  // select parameter   // scroll left-right
+//   Right-Button + Left-Button  // zoom / unzoom
 //
 // Main instruments
 // Esc  F1 F2 F3

@@ -68,16 +68,25 @@ module ui;
 // ga( xy, xy2 )       // soft line via xy to xy2
 // ga( xy, xy2, xy3 )  // soft soft line via xy via xy2 to xy3
 //
-// o
-// o xy
-// o xy xy'
-// o xy xy' xy''
-//
-// o()
-// o( xy )
-// o( xy, _xy )
-// o( xy, _xy, __xy )
-// o( xy[] )           // xy[] = ( xy.length, xy.ptr )
+// la
+// la xy
+// la xy xy'
+// la xy xy' xy''
+
+// LIGHT
+// la( xy )               // point  xy
+// la( xy[] )             // points xy[] = ( xy.length, xy.ptr )
+
+// GO LIGHT
+// la( xy, _xy )        // line  xy to _xy
+// la( xy, _xy, __xy )  // line  xy to _xy to __xy
+// la( xy[] )           // lines xy[] = ( xy.length, xy.ptr )
+
+// SOUND
+// sa()
+// sa( y )
+// sa( y, _y )
+// sa( y, _y, __y )
 
 // soft 
 //        2
@@ -202,3 +211,21 @@ module ui;
 //
 // File
 //   la go go  // файл с жвиэениями группы точек света
+
+// Blanced
+//   center
+//     x from center
+//    -x from center
+//     y from center
+//    -y from center
+//
+//          y
+//       -x c x
+//         -y
+//
+// always
+//  one point in center
+//   1x1 3x1 5x1 7x1
+//   1x3 3x3 5x3 7x3
+//   1x5 3x5 5x5 7x5
+//   1x7 3x7 5x7 7x7
