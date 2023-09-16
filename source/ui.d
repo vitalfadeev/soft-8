@@ -59,6 +59,25 @@ module ui;
 //
 // ga point to x,y via point soft
 //   1 to 3 via 2 soft
+//
+// a
+// ga
+//
+// a( xy )             // point
+// ga( xy )            // line
+// ga( xy, xy2 )       // soft line via xy to xy2
+// ga( xy, xy2, xy3 )  // soft soft line via xy via xy2 to xy3
+//
+// o
+// o xy
+// o xy xy'
+// o xy xy' xy''
+//
+// o()
+// o( xy )
+// o( xy, _xy )
+// o( xy, _xy, __xy )
+// o( xy[] )           // xy[] = ( xy.length, xy.ptr )
 
 // soft 
 //        2
