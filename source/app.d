@@ -13,14 +13,14 @@ void main()
 	// Test Draw
 	chip.ga( renderer );
 
-	chip.To!Chip_Hovered();
+	chip.to!Chip_Hovered();
 	chip.ga( renderer );
 
 	// Test Secnsor
-	chip.To!Chip();
+	chip.to!Chip();
 	chip.sense(D(1));
 
-	chip.To!Chip_Hovered();
+	chip.to!Chip_Hovered();
 	chip.sense(D(1));
 }
 

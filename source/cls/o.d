@@ -76,7 +76,7 @@ class O
 
 
     //
-    void To(CLS)()
+    void to(CLS)()
     {
         // o
         //   state -> state'
@@ -196,7 +196,7 @@ void sense_(T)( O o, D d )
 //   to_Init()
 //   to_Hover()
 //pragma( inline, true )
-void TryTo(T)( O o, D d )
+void try_to(T)( O o, D d )
 {
     import std.string;
 
@@ -222,10 +222,10 @@ mixin template State_sense_Mixin(T)
     override
     void sense( D d )
     {
-        pragma( msg, "ssens: ", __FUNCTION__ );
+        pragma( msg, "state_sense: ", __FUNCTION__ );
 
         sense_!T( this, d );
-        TryTo!T( this, d );
+        try_to!T( this, d );
 
         // recursive
         sense_recursive( d );
