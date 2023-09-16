@@ -50,7 +50,7 @@ class O
     }
 
 
-    // foreach( e; o )...
+    // foreach( o; this )...
     int opApply(scope int delegate(O) dg)
     {
         foreach( o; v )
@@ -62,7 +62,7 @@ class O
         return 0;
     }    
 
-    // foreach_reverse( e; o )...
+    // foreach_reverse( o; this )...
     int opApplyReverse(scope int delegate(O) dg)
     {
         foreach_reverse( o; v )
@@ -103,8 +103,10 @@ class O
     }
 
 
-    void Eat( O b )
+    void opOpAssign( string op : "~" )( O b )
     {
+        // o
+        //   v <- b
         v ~= b;
     }
 
@@ -114,11 +116,10 @@ class O
     }
 
 
-    // Recursive
     void sense_recursive( D d )
     {
-        foreach( e; this )
-            e.sense( d );
+        foreach( o; this.v )
+            o.sense( d );
     }
 }
 
