@@ -173,3 +173,13 @@ module ui;
 //   x,y,w,h  - rect body
 //   cx,cy    - center
 
+// Body
+//   x,y,w,h  - rect body
+//   sx,sy    - start point  // may be center  // center of rotation
+
+
+// File
+//   la go     //  файлс движениями токи света
+//
+// File
+//   la go go  // файл с жвиэениями группы точек света

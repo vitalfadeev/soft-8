@@ -1,9 +1,19 @@
 module cls.o;
 
+import std.container.dlist : DList;
 import bindbc.sdl;
 import types;
 import la;
 
+// O
+//
+
+// O 
+//  ma child in O
+//
+// O
+//   ma!T
+//   ma!T( T_args )
 
 abstract
 class O
@@ -11,47 +21,39 @@ class O
     alias T = typeof(this);
 
     // virtual functions
-    void Sensor( D d ) {};
-    void Draw( Renderer renderer ) {};
-    void Save( size_t level, ubyte[]* result ) {};
-    void Load() {};
-    void Arrange( Ars* ) {};
+    // sensable
+    void sense( D d ) {};
+    // visable
+    void ga( Renderer renderer ) {};
 
-    // DList
     // Inner content
-    T f;   // First inner object  
-    T l;   // Last inner object     
-    T i;   // I. Central inner object. Focused. 
-    // Same level object. SList-pattern
-    T next;
-    T prev;
+    DList!T v;
 
-    // Location
-    Loc loc; // CS | XY
-
-    // Data
-    M8 id;
-
-    // View
-    Cola      fg = Cola( 199, 199,  199, 255 );
-    Cola      bg = Cola(   0,   0,    0, 255 );
-    //
-    bool      hoverable;
-    bool      selectable;
-    // Drag
-    bool      dragable;
+    // vars
+    //   ...
 
 
-    // Methods
-    bool Is( Loc b )
+    // 
+    auto ma(T,ARGS...)( ARGS args )
     {
-        return false;
+        // ma child of class T
+        // ma!T
+        // ma!T()
+        // ma!T( T_args )
+        //   new T
+        //   add in to this.v
+        auto b = new T( args );
+
+        this.v ~= b;
+
+        return b;
     }
+
 
     // foreach( e; o )...
     int opApply(scope int delegate(O) dg)
     {
-        for ( auto o=f; o !is null; o = o.next )
+        foreach( o; v )
         {
             int result = dg(o);
             if (result)
@@ -63,7 +65,7 @@ class O
     // foreach_reverse( e; o )...
     int opApplyReverse(scope int delegate(O) dg)
     {
-        for ( auto o=l; o !is null; o = o.prev )
+        foreach_reverse( o; v )
         {
             int result = dg(o);
             if (result)
@@ -76,6 +78,9 @@ class O
     //
     void To(CLS)()
     {
+        // o
+        //   state -> state'
+
         // o
         //   __vptr
         //   __monitor
@@ -100,30 +105,20 @@ class O
 
     void Eat( O b )
     {
-        if ( this.f is null )
-        {
-            this.f = b;
-            this.l = b;
-        }
-        else
-        {
-            this.l.next = b;
-            b.prev = this.l;
-            this.l = b;
-        }
+        v ~= b;
     }
 
     void Out( O b )
     {
-        //
+        // v.remove( b )
     }
 
 
     // Recursive
-    void SensorRecursive( D d )
+    void sense_recursive( D d )
     {
         foreach( e; this )
-            e.Sensor( d );
+            e.sense( d );
     }
 }
 
@@ -132,31 +127,31 @@ class O
 //   O _super;
 //   alias _super this;
 //
-//   void Sensor( o, d )
+//   void sense( o, d )
 mixin template OMixin()
 {
     alias THIS=__traits(parent, {});
     pragma( msg, "class: ", THIS );    
 
     //
-    mixin OSensorMixin!(THIS);
+    mixin OsenseMixin!(THIS);
 }
 
 // O
-//   Sensor
-mixin template OSensorMixin(T)
+//   sense
+mixin template OsenseMixin(T)
 {
     import types;
 
     override    
-    void Sensor( D d )
+    void sense( D d )
     {
         pragma( msg, "osens: ", __FUNCTION__ );
 
-        Sense!T( this, d );
+        sense_!T( this, d );
 
         // recursive
-        SensorRecursive( d );
+        sense_recursive( d );
     }
 }
 
@@ -165,7 +160,7 @@ mixin template OSensorMixin(T)
 //   if d.type == SDL_*   on_SDL_*;
 //   if d.type == XSDL_*  on_XSDL_*;
 //pragma( inline, true )
-void Sense(T)( O o, D d )
+void sense_(T)( O o, D d )
 {
     import std.traits;
     import std.string;
@@ -219,20 +214,20 @@ mixin template StateMixin()
     alias THIS = typeof(this); // Init, Hover
     pragma( msg, "state: ", THIS );
     
-    mixin StateSensorMixin!(THIS);
+    mixin State_sense_Mixin!(THIS);
 }
 
-mixin template StateSensorMixin(T)
+mixin template State_sense_Mixin(T)
 {
     override
-    void Sensor( D d )
+    void sense( D d )
     {
         pragma( msg, "ssens: ", __FUNCTION__ );
 
-        Sense!T( this, d );
+        sense_!T( this, d );
         TryTo!T( this, d );
 
         // recursive
-        SensorRecursive( d );
+        sense_recursive( d );
     }
 }
