@@ -15,3 +15,4 @@ soft-8-test-*
 *.obj
 *.lst
 mixins.d
+*.sublime-workspace
