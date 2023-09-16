@@ -51,8 +51,8 @@ enum DT : M16
 
 struct D
 {
-    DT   t;
-    MPTR m;
+    DT   t;  // CPU register 1
+    MPTR m;  // CPU register 2
 }
 
 
@@ -64,8 +64,8 @@ struct Sensors
     SENSOR[] sensors;
     alias sensors this;
 
-    void sense( D d )
-    {
+    void sense( D d )  // 2 argumnts: ( t, m ):       ( CPU reg1, CPU reg2 )
+    {                  //   + this  : ( this, t, m ): ( CPU reg1, CPU reg2, CPU reg3 )
         foreach( s; sensors )
             s( d );
     }
