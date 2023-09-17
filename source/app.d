@@ -11,10 +11,10 @@ void main()
 	auto chip = new Chip();
 
 	// Test Draw
-	chip.ga( renderer );
+	chip.la( renderer );
 
 	chip.to!Chip_Hovered();
-	chip.ga( renderer );
+	chip.la( renderer );
 
 	// Test Secnsor
 	chip.to!Chip();
@@ -30,7 +30,7 @@ class Chip : O
 	mixin StateMixin!();
 
 	override
-	void ga( Renderer renderer )
+	void la( Renderer renderer )
 	{
 		writeln( "Chip.Draw" );
 	}
@@ -41,7 +41,7 @@ class Chip_Selected : Chip
 	mixin StateMixin!();
 
 	override
-	void ga( Renderer renderer )
+	void la( Renderer renderer )
 	{
 		writeln( "Chip_Selected.Draw" );
 	}
@@ -52,7 +52,7 @@ class Chip_Hovered : Chip
 	mixin StateMixin!();
 
 	override
-	void ga( Renderer renderer )
+	void la( Renderer renderer )
 	{
 		writeln( "Chip_Hovered.Draw" );
 	}

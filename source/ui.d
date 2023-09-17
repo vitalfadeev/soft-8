@@ -229,3 +229,10 @@ module ui;
 //   1x3 3x3 5x3 7x3
 //   1x5 3x5 5x5 7x5
 //   1x7 3x7 5x7 7x7
+
+// O
+//   Button             - margin: 10
+//     ButtonOk
+//     ButtonCancel
+//   Check
+//   Text               - color: inherit

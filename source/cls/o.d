@@ -6,7 +6,13 @@ import types;
 import la;
 
 // O
-//
+//   v
+//     o
+//     o
+//   sense
+//   ma
+//   la
+//   to
 
 // O 
 //  ma child in O
@@ -24,7 +30,7 @@ class O
     // sensable
     void sense( D d ) {};
     // visable
-    void ga( Renderer renderer ) {};
+    void la( Renderer renderer ) {};
 
     // Inner content
     DList!T v;

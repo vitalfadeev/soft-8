@@ -4,6 +4,25 @@ import std.container.dlist : DList;
 import std.stdio : writeln;
 import std.functional : toDelegate;
 
+// Linux
+//   pool <- evdev <- device 
+//     D( time, type, code, value )
+//        M32   M16   M16   M32
+// my version
+//        M32   M16   M16   M64
+//        R64               R64  // on x86_64
+//        R32   R32         R32  // on x86
+//
+// Windows
+//   pool <- GetMessage <- device 
+//     D( hwnd, message, wParam, lParam, time, pt,  lPrivate )
+//        M64   M32      M64     M64     M32   M128 M32  // on x86_64
+//        M32   M32      M32     M32     M32   M128 M32  // on x86
+// my version
+//              M64      M64     M64     M64  // 64
+//              R64      R64     R64     R64
+//              M32      M32     M32     M32  // 32
+//              R32      R32     R32     R32
 
 // OS
 // pool
@@ -103,42 +122,47 @@ class SensorClass
 unittest
 {
     // function
+    // sensor, no-brain, action
     void KeyASensor( D d )
     {
-        if ( d.t == DT.KEY_PRESSED )
-        if ( d.m == cast(MPTR)'A' )
-            game.pool.put( D(DT.KEY_A_PRESSED) );
+        if ( d.t == DT.KEY_PRESSED )                      // sensor
+        if ( d.m == cast(MPTR)'A' )                       //
+            game.pool.put( D(DT.KEY_A_PRESSED) );         // action
     }
 
     // struct.function
+    // sensor, no-brain, action
     struct KeyCTRLSensor
     {
         static
         void sense( D d )
         {
-            if ( d.t == DT.KEY_PRESSED )
-            if ( d.m == cast(MPTR)'!' )
-                game.pool.put( D(DT.KEY_CTRL_PRESSED) );
+            if ( d.t == DT.KEY_PRESSED )                  // sensor
+            if ( d.m == cast(MPTR)'!' )                   // 
+                game.pool.put( D(DT.KEY_CTRL_PRESSED) );  // action
         }
     }
 
     // class
+    // sensor, brain, action
     class KeysCTRLASensor : ISensor
     {
-        bool ctrl;
+        bool ctrl;                                           // brain memory
         bool a;
 
+        //
         void sense( D d )
         {
-            switch ( d.t )
+            switch ( d.t )                                   // sensor
             {
                 case DT.KEY_CTRL_PRESSED: on_KEY_CTRL_PRESSED( d ); break;
                 case DT.KEY_A_PRESSED:    on_KEY_A_PRESSED( d ); break;
                 default: return;
             }
 
-            if ( ctrl && a )
-                game.pool.put( D(DT.KEYS_CTRL_A_PRESSED) );
+            //
+            if ( ctrl && a )                                 // brain login
+                game.pool.put( D(DT.KEYS_CTRL_A_PRESSED) );  // action
 
             // ANY CODE
             //   check d.m
@@ -150,19 +174,20 @@ unittest
         pragma( inline, true )
         void on_KEY_CTRL_PRESSED( D d )
         {
-            ctrl = true;
+            ctrl = true;                                     // action
         }
 
         pragma( inline, true )
         void on_KEY_A_PRESSED( D d )
         {
-            a = true;
+            a = true;                                        // action
         }
     }
 
+    // no-sensor, no-brain, action
     void EachSensor( D d )
     {
-        writeln( d );
+        writeln( d );                                        // action
     }
 
     //
