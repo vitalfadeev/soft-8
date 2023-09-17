@@ -168,3 +168,27 @@ module brain;
 // 1 0 0 0 0 0 1 0  and ........ ; je next  //
 // 1 0 0 0 0 0 1 0  and ........ ; je next  //
 
+//   1 1 1 1 1 1 1 0  // reduced up-down
+// 1                  
+// 1                  // reduced left-right
+// 1
+// 1
+// 1
+// 1
+// 1
+// 1
+//
+// fast compare 
+//   reduced_ud == ideal
+//   reduced_lr == ideal
+//
+// then full compare
+//   8 iterations: and R, X; je next
+
+//   1 // reduced up-down to bit
+// 1   // reduced left-right to bit
+//
+// fast-fast compare 
+//   reduced_ud_bit == 1
+//   reduced_lr_bit == 1
+
