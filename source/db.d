@@ -3,11 +3,11 @@ module db;
 // 9x9  -> 3x3  -> 1x1
 //
 // record
-//   reduce record
-//     reduce record
-//       reduced -> index
+//   reduce record -> index
+//     reduce record -> index
+//       reduced       -> index
 //
 // index
-//   reduced
-//     reduced
+//   index - reduced
+//     index - reduced
 //       record
