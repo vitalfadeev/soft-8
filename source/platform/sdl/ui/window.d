@@ -23,7 +23,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     SDL_Renderer* renderer;
 
 
-    this( Size size=Size(640,480), string name="SDL2 Window" )
+    this( LXSize size=LXSize(640,480), string name="SDL2 Window" )
     {
         _create_window( size, name );
         _create_renderer();
@@ -88,7 +88,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
     }
 
-    void la_rect( M16 x, M16 y, Size size )
+    void la_rect( M16 x, M16 y, LXSize size )
     {
         // inner rect
         //   0,10 = line 0..9 including 9
@@ -145,7 +145,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
 
 
     private
-    void _create_window( Size size, string name )
+    void _create_window( LXSize size, string name )
     {
         import std.string;
 

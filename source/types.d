@@ -451,4 +451,4 @@ struct SX
 }
 
 
-alias Size = LX;
+alias LXSize = LX;
