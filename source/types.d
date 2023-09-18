@@ -195,6 +195,12 @@ version(SDL)
         SDL_Event _e;
         alias _e this;
 
+        pragma( inline, true )
+        auto t()
+        {
+            return _e.type;
+        }
+
         string toString()
         {
             import std.format;
