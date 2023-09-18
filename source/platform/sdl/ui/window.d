@@ -44,10 +44,10 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     pragma( inline, true )
     void on_DT_MOUSEBUTTONDOWN( D d )
     {
-        if ( d.button.button == SDL_BUTTON_LEFT )    // sub sensor
+        if ( d.button.button == SDL_BUTTON_LEFT )  // sub sensor
         {
-            game.pool ~= DT_MOUSE_LEFT_PRESSED;      // action
-            game.pool ~= D_LA( rect );      // action
+            game.pool ~= DT_MOUSE_LEFT_PRESSED;    // action
+            game.pool ~= D_LA( rect );             // action
         }
     }
 

@@ -27,10 +27,6 @@ struct Pool
     pragma( inline, true )
     void opOpAssign( string op : "~" )( SDL_EventType t )
     {
-        //SDL_Event e;
-        //e.type = cast(SDL_EventType)...;
-        //e.user.data1 = ...;
-        //e.user.data2 = ...;
         SDL_Event event;
         event.type = t;
         SDL_PushEvent( &event ); // The event is copied into the queue.

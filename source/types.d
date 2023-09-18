@@ -253,13 +253,13 @@ version(SDL)
 
     struct D_LA
     {
-        SDL_Event e;
+        SDL_UserEvent e;
         alias e this;
 
         this( LXRect rect )
         {        
-            e.type = DT_LA;
-            e.user.data1 = rect.to!MPTR();
+            e.type  = DT_LA;
+            e.data1 = rect.to!MPTR();
         }
     }
 
