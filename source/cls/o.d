@@ -20,7 +20,7 @@ import la;
 //   ma!T
 //   ma!T( T_args )
 abstract
-class O : IVAble, ILaAble, ISenseAble, IStateAble
+class O : IVAble!O, ILaAble, ISenseAble, IStateAble
 {
     alias T = typeof(this);
 
@@ -40,13 +40,13 @@ interface ILaAble
     void la( Renderer renderer );
 }
 
-interface IVAble 
+interface IVAble(TCHILDS)
 {
-    auto ma(T,ARGS...)( ARGS args );
-    int  opApply(scope int delegate(O) dg);
-    int  opApplyReverse(scope int delegate(O) dg);
-    void opOpAssign( string op : "~" )( O b );
-    void Out( O b );
+    auto ma(TCHILD,ARGS...)( ARGS args );
+    int  opApply(scope int delegate(TCHILDS) dg);
+    int  opApplyReverse(scope int delegate(TCHILDS) dg);
+    void opOpAssign( string op : "~" )( TCHILDS b );
+    void de( TCHILDS b );
 }
 
 interface IStateAble
@@ -66,7 +66,7 @@ mixin template SenseAble( T )
     };
 
     //
-    static if( isDerivedFromInterface!(T,IVAble) )
+    static if( isDerivedFromInterface!(T,IVAble!O) )
     void sense_recursive( D d )
     {
         foreach( o; this.v )
@@ -85,7 +85,7 @@ mixin template VAble( T, TCHILDS )
     DList!TCHILDS v;
 
     // 
-    auto ma(TC,ARGS...)( ARGS args )
+    auto ma(TCHILD,ARGS...)( ARGS args )
         // if ( TC derrived from TCHILDS )
     {
         // ma child of class T
@@ -94,7 +94,7 @@ mixin template VAble( T, TCHILDS )
         // ma!T( T_args )
         //   new T
         //   add in to this.v
-        auto b = new TC( args );
+        auto b = new TCHILD( args );
 
         this.v ~= b;
 
@@ -134,7 +134,7 @@ mixin template VAble( T, TCHILDS )
         v ~= b;
     }
 
-    void Out( TCHILDS b )
+    void de( TCHILDS b )
     {
         // v.remove( b )
     }
@@ -154,13 +154,13 @@ mixin template StateAble( T )
         //   interfaces
         //   fields
         import std.conv;
+        import traits;
 
         // object.sizeof != object.sizeof
         //   assert
         static 
-        if ( __traits( classInstanceSize, CLS ) != __traits( classInstanceSize, typeof(this) ) )
-            static 
-            assert( "Class instance size must be equal. " ~ 
+        if ( !isSameInstaneSize!(CLS,T) )
+            static assert( "Class instance size must be equal. " ~ 
                 CLS.stringof ~ " and " ~ typeof(this).stringof ~ ". " ~  
                 __traits( classInstanceSize, CLS ).to!string ~ " != " ~ __traits( classInstanceSize, typeof(this) ).to!string ~ "."
             );
@@ -207,7 +207,7 @@ mixin template OsenseMixin(T)
         try_to!T( this, d );
 
         // recursive sense
-        static if( isDerivedFromInterface!(T,IVAble) )
+        static if( isDerivedFromInterface!(T,IVAble!O) )
         sense_recursive( d );
     }
 }
@@ -235,10 +235,10 @@ void sense_(T)( O o, D d )
                 }
             }
 
-    // XSDL
+    // DT_
     static foreach( m; __traits( allMembers, T ) )
         static if ( __traits(isStaticFunction, __traits(getMember, T, m)) ) 
-            static if ( m.startsWith( "on_XSDL_" ) )
+            static if ( m.startsWith( "on_DT_" ) )
             {
                 if (d.type == mixin(m[3..$]))
                 { 
@@ -291,11 +291,10 @@ unittest
     }
 
     //
-    auto renderer = new Renderer();
-
     auto chip = new Chip();
 
     // Test Draw
+    auto renderer = new Renderer();
     chip.la( renderer );
 
     chip.to!Chip_Hovered();

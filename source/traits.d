@@ -14,3 +14,10 @@ template isDerivedFromInterface(T,A)
         enum isDerivedFromInterface = false;
 }
 
+template isSameInstaneSize(CLS,T)
+{
+    static if ( __traits( classInstanceSize, CLS ) != __traits( classInstanceSize, typeof(this) ) )
+        enum isSameInstaneSize = true;
+    else
+        enum isSameInstaneSize = false;
+}

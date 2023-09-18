@@ -9,7 +9,9 @@ import cls.o : IVAble, ILaAble, ISenseAble, IStateAble;
 import cls.o : VAble,  LaAble,  SenseAble,  StateAble;
 
 
-class WindowSensor : ISenseAble, IVAble, ILaAble
+alias Window = WindowSensor;
+
+class WindowSensor : ISenseAble, IVAble!O, ILaAble
 {
     alias T = typeof(this);
 
