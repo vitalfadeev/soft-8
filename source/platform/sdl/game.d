@@ -33,7 +33,7 @@ import std.container.dlist : DList;
 import std.stdio : writeln;
 import std.functional : toDelegate;
 import bindbc.sdl;
-import pool;
+import pool : Pool;
 import sensor;
 import types;
 
@@ -91,9 +91,9 @@ unittest
     // sensor, no-brain, action
     void KeyASensor( D d )
     {
-        if ( d.t == DT.KEY_PRESSED )                      // sensor
-        if ( d.m == cast(MPTR)'A' )                       //
-            game.pool.put( D(DT.KEY_A_PRESSED) );         // action
+        if ( d.t == DT.KEY_PRESSED )                  // sensor
+        if ( d.m == cast(MPTR)'A' )                   //
+            game.pool ~= D(DT.KEY_A_PRESSED);         // action
     }
 
     // struct.function
@@ -103,9 +103,9 @@ unittest
         static
         void sense( D d )
         {
-            if ( d.t == DT.KEY_PRESSED )                  // sensor
-            if ( d.m == cast(MPTR)'!' )                   // 
-                game.pool.put( D(DT.KEY_CTRL_PRESSED) );  // action
+            if ( d.t == DT.KEY_PRESSED )              // sensor
+            if ( d.m == cast(MPTR)'!' )               // 
+                game.pool ~= D(DT.KEY_CTRL_PRESSED);  // action
         }
     }
 
@@ -127,12 +127,12 @@ unittest
             }
 
             //
-            if ( ctrl && a )                                 // brain login
-                game.pool.put( D(DT.KEYS_CTRL_A_PRESSED) );  // action
+            if ( ctrl && a )                             // brain login
+                game.pool ~= D(DT.KEYS_CTRL_A_PRESSED);  // action
 
             // ANY CODE
             //   check d.m
-            //   pool.put( d(sid,m) )
+            //   pool ~= d(sid,m)
             //   direct action
         }
 
@@ -161,6 +161,7 @@ unittest
     game.sensors ~= &KeyCTRLSensor.sense;
     game.sensors ~= new KeysCTRLASensor();
     game.sensors ~= &EachSensor;
+    game.sensors ~= function ( D d ) { import std.stdio; writeln( "Lambda Sensor: ", d ); };
 
     //
     game.pool ~= D(DT.KEY_PRESSED, cast(MPTR)'!');
@@ -215,6 +216,13 @@ ref auto sensors()
     return .game.sensors;
 }
 
+// game.pool
+pragma( inline, true )
+ref auto pool()
+{
+    return .game.pool;
+}
+
 
 //
 void init_sdl()
@@ -235,34 +243,13 @@ void init_sdl()
 
 
 //
-void create_window(W,H)( ref SDL_Window* window, W w, H h )
-{
-    // Window
-    window = 
-        SDL_CreateWindow(
-            "SDL2 Window",
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
-            w, h,
-            0
-        );
-
-    if ( !window )
-        throw new SDLException( "create_window" );
-
-    // Update
-    SDL_UpdateWindowSurface( window );    
-}
-
-//
 static
 this()
 {
     init_sdl();
 
+    // PS
     // on Windows SDL Window must be created for using event loop
     //   because events going from window &WindowProc
-    SDL_Window*  window;
-    create_window( window, 640, 480 );
 }
 

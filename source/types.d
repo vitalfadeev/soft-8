@@ -177,14 +177,30 @@ struct Loc
 }
 
 
-enum DT : M16
+version(SDL)
+{
+    import bindbc.sdl;
+    alias DT = SDL_EventType;
+}
+else
+{
+    alias DT = M16;
+}
+enum: DT
 {
     _,
+    // SDL
     KEY_PRESSED,
     KEY_A_PRESSED,
     KEY_CTRL_PRESSED,
     KEYS_CTRL_A_PRESSED,
+    //
+    DT_MOUSEBUTTONDOWN = SDL_MOUSEBUTTONDOWN,
+    // game
+    DT_USER_ = 0x8000,
+    DT_MOUSE_LEFT_PRESSED,
 }
+
 
 version(SDL)
 {
@@ -224,8 +240,8 @@ version(SDL)
             static if ( is( typeof( __traits( getMember, types, name ) ) == SDL_EventType ) )
                 if ( t == __traits( getMember, sdl.events, name ) ) return name;
 
-        import std.conv;
-        return t.to!string;
+        import std.format;
+        return format!"UserEvent_0x%X"( t );
     }
 }
 else

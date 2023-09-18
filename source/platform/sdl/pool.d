@@ -22,8 +22,10 @@ struct Pool
         return ( front.type == SDL_QUIT );
     }
 
+    //alias put(T) = opOpAssign!("~", T)(T t);
+
     pragma( inline, true )
-    void put( SDL_EventType t )
+    void opOpAssign( string op : "~" )( SDL_EventType t )
     {
         //SDL_Event e;
         //e.type = cast(SDL_EventType)...;
@@ -35,8 +37,8 @@ struct Pool
     }
 
     pragma( inline, true )
-    void opOpAssign( string op : "~" )( SDL_EventType t )
+    void opOpAssign( string op : "~" )( D d )
     {
-        put( t );
+        SDL_PushEvent( cast(SDL_Event*)&d ); // The event is copied into the queue.
     }
 }
