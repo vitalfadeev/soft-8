@@ -236,3 +236,13 @@ module ui.ui;
 //     ButtonCancel
 //   Check
 //   Text               - color: inherit
+
+// O
+//   Window : O
+//     la()
+//       game.pool <- DT_LA, rect
+// game
+//   pool
+//     DT_LA
+//       foreach o in rect
+//         o.la()

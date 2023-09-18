@@ -199,6 +199,7 @@ enum: DT
     // game
     DT_USER_ = 0x8000,
     DT_MOUSE_LEFT_PRESSED,
+    DT_LA,
 }
 
 
@@ -215,6 +216,12 @@ version(SDL)
         auto t()
         {
             return _e.type;
+        }
+
+        pragma( inline, true )
+        auto m()
+        {
+            return _e.user.data1;
         }
 
         string toString()
@@ -265,4 +272,45 @@ version(SDL)
             super( format!"%s: %s"( SDL_GetError(), msg ) );
         }
     }
+}
+
+
+struct Rect
+{
+    union
+    {
+        struct
+        {
+            M16 x; // X a
+            M16 y;
+            M16 w;
+            M16 h;
+        }
+        void*  p;
+    };
+
+    this( M16 x, M16 y, M16 w, M16 h )
+    {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+
+    this( void* ptr )
+    {
+        p = ptr;
+    }
+
+    void* toVoidPtr()
+    {
+        return p;
+    }
+}
+
+
+struct Size
+{
+    M16 w;
+    M16 h;
 }
