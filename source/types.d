@@ -3,16 +3,19 @@ module types;
 //import std.conv;
 //import std.format;
 import std.stdio;
-import bindbc.sdl;
 import fixed_16_16;
 
 
-alias M   = void;
-alias M1  = bool;
-alias M8  = ubyte;
-alias M16 = ushort;
-alias M32 = uint;
-alias M64 = ulong;
+alias M       = void;
+alias M1      = bool;
+alias M8      = ubyte;
+alias M16     = ushort;
+alias M32     = uint;
+alias M64     = ulong;
+alias MPTR    = void*;
+alias SENSOR  = void delegate( D d );
+alias SENSORF = void function( D d );
+
 
 struct CS
 {
@@ -150,12 +153,6 @@ class Renderer
     //
 }
 
-struct D
-{
-    M16 a;
-    alias a this;    
-}
-
 struct Ars
 {
     M16 a;
@@ -176,5 +173,74 @@ struct Loc
     this( M16 c, M16 s )
     {
         this.cs = CS( C(c), S(s) );
+    }
+}
+
+
+enum DT : M16
+{
+    _,
+    KEY_PRESSED,
+    KEY_A_PRESSED,
+    KEY_CTRL_PRESSED,
+    KEYS_CTRL_A_PRESSED,
+}
+
+version(SDL)
+{
+    import bindbc.sdl;
+
+    struct D
+    {
+        SDL_Event _e;
+        alias _e this;
+
+        string toString()
+        {
+            import std.format;
+            return 
+                format!"%s( %s:%d )"(
+                    typeof(this).stringof,
+                    _e.type.toString,
+                    _e.type
+                );
+        }
+    }
+
+    string toString( SDL_EventType t )
+    {
+        import std.traits;
+        import std.string;
+        import sdl.events;
+
+        static foreach( name; __traits(allMembers, sdl.events) )
+        static if ( name.startsWith( "SDL_") )
+            static if ( is( typeof( __traits( getMember, types, name ) ) == SDL_EventType ) )
+                if ( t == __traits( getMember, sdl.events, name ) ) return name;
+
+        import std.conv;
+        return t.to!string;
+    }
+}
+else
+{
+    struct D
+    {
+        M16  t;  // CPU register 1
+        MPTR m;  // CPU register 2
+    }
+}
+
+version(SDL)
+{
+    import bindbc.sdl;
+
+    class SDLException : Exception
+    {
+        this( string msg )
+        {
+            import std.format;
+            super( format!"%s: %s"( SDL_GetError(), msg ) );
+        }
     }
 }

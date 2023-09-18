@@ -1,4 +1,4 @@
-module ui;
+module ui.ui;
 
 // wait MOUSE_MOVE x,y
 // on MOUSE_MOVE x,y

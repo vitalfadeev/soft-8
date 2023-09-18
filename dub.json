@@ -1,19 +1,18 @@
 {
-	"authors": [
-		"vital"
-	],
-	"copyright": "Copyright © 2023, vital",
-	"dependencies": {
-		"bindbc-sdl": "~>1.4.2",
-		"intel-intrinsics": "~>1.11.13"
+	"name"             : "soft-8",
+	"description"      : "LaView",
+	"authors"          : ["vital"],
+	"copyright"        : "Copyright © 2023, vital",
+	"dependencies"     : {
+	"bindbc-sdl"       : "~>1.4.2",
+	"intel-intrinsics" : "~>1.11.13"
 	},
-	"description": "LaView",
-	"dflags": [
+	"dflags"           : [
 		"-mixin=mixins.d"
 	],
-	"license": "proprietary",
-	"name": "soft-8",
-	"versions": [
-		"SDL_2_26"
+	"license"          : "GPL3",
+	"versions"         : [
+		"SDL_2_26", 
+		"SDL"
 	]
 }

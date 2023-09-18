@@ -1,4 +1,4 @@
-module driver;
+module sensor.driver.driver;
 
 // driver
 // driver is sensor
