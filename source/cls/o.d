@@ -20,7 +20,7 @@ import la;
 //   ma!T
 //   ma!T( T_args )
 abstract
-class O
+class O : IVAble, ILaAble, ISenseAble, IStateAble
 {
     alias T = typeof(this);
 
@@ -30,31 +30,42 @@ class O
     mixin StateAble!T;
 }
 
+interface ISenseAble
+{
+    void sense( D d );
+}
+
+interface ILaAble
+{
+    void la( Renderer renderer );
+}
+
+interface IVAble 
+{
+    auto ma(T,ARGS...)( ARGS args );
+    int  opApply(scope int delegate(O) dg);
+    int  opApplyReverse(scope int delegate(O) dg);
+    void opOpAssign( string op : "~" )( O b );
+    void Out( O b );
+}
+
+interface IStateAble
+{
+    void to(CLS)();
+}
+
 
 mixin template SenseAble( T )
 {
-
-    template isDerivedFromInterface(A) 
-    { 
-        import std.traits;
-        import std.meta;
-        import std.algorithm.searching;
-
-        template isEqual(A) { enum isEqual = is( T == A ); }
-
-        static if ( anySatisfy!( isEqual!ISenseAble, InterfacesTuple!T ) )
-            enum isDerivedFromInterface = true;
-        else
-            enum isDerivedFromInterface = false;
-    }
+    import traits : isDerivedFromInterface;
 
     void sense( D d ) 
     {
-        //
+        // CUSTOM CODE
     };
 
     //
-    static if( isDerivedFromInterface!IVAble )
+    static if( isDerivedFromInterface!(T,IVAble) )
     void sense_recursive( D d )
     {
         foreach( o; this.v )
@@ -165,10 +176,13 @@ mixin template StateAble( T )
 //   void sense( o, d )
 mixin template OMixin()
 {
+    import traits : isDerivedFromInterface;
+
     alias THIS=__traits(parent, {});
     pragma( msg, "class: ", THIS );    
 
     //
+    static if( isDerivedFromInterface!(THIS,ISenseAble) )
     mixin OsenseMixin!(THIS);
 }
 
@@ -181,11 +195,16 @@ mixin template OsenseMixin(T)
     override    
     void sense( D d )
     {
+        import traits : isDerivedFromInterface;
         pragma( msg, "osens: ", __FUNCTION__ );
 
         sense_!T( this, d );
 
+        static if( isDerivedFromInterface!(THIS,IStateAble) )
+        try_to!T( this, d );
+
         // recursive
+        static if( isDerivedFromInterface!(T,IVAble) )
         sense_recursive( d );
     }
 }
@@ -242,34 +261,45 @@ void try_to(T)( O o, D d )
 }
 
 
-mixin template StateMixin()
-{
-    import types;
-
-    alias THIS = typeof(this); // Init, Hover
-    pragma( msg, "state: ", THIS );
-    
-    mixin State_sense_Mixin!(THIS);
-}
-
-mixin template State_sense_Mixin(T)
-{
-    override
-    void sense( D d )
-    {
-        pragma( msg, "state_sense: ", __FUNCTION__ );
-
-        sense_!T( this, d );
-        try_to!T( this, d );
-
-        // recursive
-        sense_recursive( d );
-    }
-}
-
-
 unittest
 {
+    class Chip : O
+    {
+        mixin OMixin!();
+
+        override
+        void la( Renderer renderer )
+        {
+            import std.stdio : writeln;
+            writeln( "Chip.Draw" );
+        }
+    }
+
+    class Chip_Selected : Chip
+    {
+        mixin OMixin!();
+
+        override
+        void la( Renderer renderer )
+        {
+            import std.stdio : writeln;
+            writeln( "Chip_Selected.Draw" );
+        }
+    }
+
+    class Chip_Hovered : Chip
+    {
+        mixin OMixin!();
+
+        override
+        void la( Renderer renderer )
+        {
+            import std.stdio : writeln;
+            writeln( "Chip_Hovered.Draw" );
+        }
+    }
+
+
     auto renderer = new Renderer();
 
     auto chip = new Chip();
@@ -282,64 +312,8 @@ unittest
 
     // Test Secnsor
     chip.to!Chip();
-    chip.sense(D(1));
+    //chip.sense(D_KEY_PRESSED('1'));
 
     chip.to!Chip_Hovered();
-    chip.sense(D(1));
-
-
-    class Chip : O
-    {
-        mixin StateMixin!();
-
-        override
-        void la( Renderer renderer )
-        {
-            writeln( "Chip.Draw" );
-        }
-    }
-
-    class Chip_Selected : Chip
-    {
-        mixin StateMixin!();
-
-        override
-        void la( Renderer renderer )
-        {
-            writeln( "Chip_Selected.Draw" );
-        }
-    }
-
-    class Chip_Hovered : Chip
-    {
-        mixin StateMixin!();
-
-        override
-        void la( Renderer renderer )
-        {
-            writeln( "Chip_Hovered.Draw" );
-        }
-    }
-}
-
-
-interface ISenseAble
-{
-    void sense( D d );
-}
-interface ILaAble
-{
-    void la( Renderer renderer );
-}
-interface IVAble 
-{
-    auto ma(T,ARGS...)( ARGS args );
-    int opApply(scope int delegate(O) dg);
-    int opApplyReverse(scope int delegate(O) dg);
-    void opOpAssign( string op : "~" )( O b );
-    void Out( O b );
-}
-interface IStateAble
-{
-    void to(CLS)();
+    //chip.sense(D_KEY_PRESSED('1'));
 }

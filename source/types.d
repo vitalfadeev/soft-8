@@ -190,16 +190,17 @@ enum: DT
 {
     _,
     // SDL
-    KEY_PRESSED,
-    KEY_A_PRESSED,
-    KEY_CTRL_PRESSED,
-    KEYS_CTRL_A_PRESSED,
+    // ...
     //
     DT_MOUSEBUTTONDOWN = SDL_MOUSEBUTTONDOWN,
     // game
     DT_USER_ = 0x8000,
     DT_MOUSE_LEFT_PRESSED,
     DT_LA,
+    DT_KEY_PRESSED,
+    DT_KEY_A_PRESSED,
+    DT_KEY_CTRL_PRESSED,
+    DT_KEYS_CTRL_A_PRESSED,
 }
 
 
@@ -263,7 +264,17 @@ version(SDL)
         }
     }
 
+    struct D_KEY_PRESSED
+    {
+        SDL_UserEvent e;
+        alias e this;
 
+        this( char a )
+        {        
+            e.type  = DT_KEY_PRESSED;
+            e.data1 = cast(MPTR)a;
+        }
+    }
 }
 else
 {

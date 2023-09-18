@@ -43,4 +43,10 @@ struct Pool
     {
         SDL_PushEvent( cast(SDL_Event*)&d ); // The event is copied into the queue.
     }
+
+    pragma( inline, true )
+    void opOpAssign( string op : "~" )( D_KEY_PRESSED d )
+    {
+        SDL_PushEvent( cast(SDL_Event*)&d ); // The event is copied into the queue.
+    }
 }

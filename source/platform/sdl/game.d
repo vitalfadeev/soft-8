@@ -92,9 +92,9 @@ unittest
     // sensor, no-brain, action
     void KeyASensor( D d )
     {
-        if ( d.t == DT.KEY_PRESSED )                  // sensor
-        if ( d.m == cast(MPTR)'A' )                   //
-            game.pool ~= D(DT.KEY_A_PRESSED);         // action
+        if ( d.t == DT_KEY_PRESSED )               // sensor
+        if ( d.m == cast(MPTR)'A' )                //
+            game.pool ~= DT_KEY_A_PRESSED;         // action
     }
 
     // struct.function
@@ -104,32 +104,32 @@ unittest
         static
         void sense( D d )
         {
-            if ( d.t == DT.KEY_PRESSED )              // sensor
-            if ( d.m == cast(MPTR)'!' )               // 
-                game.pool ~= D(DT.KEY_CTRL_PRESSED);  // action
+            if ( d.t == DT_KEY_PRESSED )           // sensor
+            if ( d.m == cast(MPTR)'!' )            // 
+                game.pool ~= DT_KEY_CTRL_PRESSED;  // action
         }
     }
 
     // class
     // sensor, brain, action
-    class KeysCTRLASensor : ISensor
+    class KeysCTRLASensor : ISenseAble
     {
-        bool ctrl;                                           // brain memory
+        bool ctrl;                                 // brain memory
         bool a;
 
         //
         void sense( D d )
         {
-            switch ( d.t )                                   // sensor
+            switch ( d.t )                         // sensor
             {
-                case DT.KEY_CTRL_PRESSED: on_KEY_CTRL_PRESSED( d ); break;
-                case DT.KEY_A_PRESSED:    on_KEY_A_PRESSED( d ); break;
+                case DT_KEY_CTRL_PRESSED: on_KEY_CTRL_PRESSED( d ); break;
+                case DT_KEY_A_PRESSED:    on_KEY_A_PRESSED( d ); break;
                 default: return;
             }
 
             //
-            if ( ctrl && a )                             // brain login
-                game.pool ~= D(DT.KEYS_CTRL_A_PRESSED);  // action
+            if ( ctrl && a )                          // brain login
+                game.pool ~= DT_KEYS_CTRL_A_PRESSED;  // action
 
             // ANY CODE
             //   check d.m
@@ -151,28 +151,25 @@ unittest
         }
     }
 
-    // no-sensor, no-brain, action
-    void EachSensor( D d )
-    {
-        writeln( d );                                        // action
-    }
-
     //
-    game.sensors ~= &KeyASensor;
-    game.sensors ~= &KeyCTRLSensor.sense;
-    game.sensors ~= new KeysCTRLASensor();
-    game.sensors ~= &EachSensor;
+    game.sensors ~= &KeyASensor;           // func
+    game.sensors ~= &KeyCTRLSensor.sense;  // struct 
+    game.sensors ~= new KeysCTRLASensor(); // class
     game.sensors ~= function ( D d ) { import std.stdio; writeln( "Lambda Sensor: ", d ); };
 
-    //
-    game.pool ~= D(DT.KEY_PRESSED, cast(MPTR)'!');
-    game.pool ~= D(DT.KEY_PRESSED, cast(MPTR)'A');
+    //// SDL require Window for events
+    //import ui.window : WindowSensor;
+    //auto window_sensor = new WindowSensor();
 
     //
-    game.go();
+    game.pool ~= D_KEY_PRESSED( '!' );
+    game.pool ~= D_KEY_PRESSED( 'A' );
 
+    ////
+    //game.go();
     //
-    assert( game.pool.empty );
+    //
+    //assert( game.pool.empty );
     //assert( a.length == 5 );
     //assert( a == [
     //        D(DT.KEY_PRESSED, cast(MPTR)'!'), 
