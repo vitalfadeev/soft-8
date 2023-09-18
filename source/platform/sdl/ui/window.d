@@ -76,17 +76,20 @@ class WindowSensor : ISensor
         la_rect( 0, 0, size );
     }
 
-    void la_cola( ulong rgba )
+    void la_cola( uint rgba )
     {
-        ubyte a = ( rgba & 0xFF000000 ) > 32;
-        ubyte b = ( rgba & 0x00FF0000 ) > 16;
-        ubyte g = ( rgba & 0x0000FF00 ) > 8;
-        ubyte r = ( rgba & 0x000000FF );
+        ubyte r = ( rgba & 0xFF000000 ) >> 24;
+        ubyte g = ( rgba & 0x00FF0000 ) >> 16;
+        ubyte b = ( rgba & 0x0000FF00 ) >> 8;
+        ubyte a = ( rgba & 0x000000FF );
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
     }
 
     void la_rect( M16 x, M16 y, Size size )
     {
+        // inner rect
+        //   0,10 = line 0..9 including 9
+
         SDL_Rect r;
         r.x = x;
         r.y = y;
