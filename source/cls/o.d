@@ -52,6 +52,7 @@ interface IVAble
 interface IStateAble
 {
     void to(CLS)();
+    void try_to(CLS)( O o, D d );
 }
 
 
@@ -198,12 +199,14 @@ mixin template OsenseMixin(T)
         import traits : isDerivedFromInterface;
         pragma( msg, "osens: ", __FUNCTION__ );
 
+        // sense
         sense_!T( this, d );
 
-        static if( isDerivedFromInterface!(THIS,IStateAble) )
+        // try go to new state
+        static if( isDerivedFromInterface!(T,IStateAble) )
         try_to!T( this, d );
 
-        // recursive
+        // recursive sense
         static if( isDerivedFromInterface!(T,IVAble) )
         sense_recursive( d );
     }
@@ -250,14 +253,14 @@ void sense_(T)( O o, D d )
 //   to_Init()
 //   to_Hover()
 //pragma( inline, true )
-void try_to(T)( O o, D d )
+void try_to(CLS)( O o, D d )
 {
     import std.string;
 
-    static foreach( m; __traits( allMembers, T ) )
-        static if ( __traits(isStaticFunction, __traits(getMember, T, m)) ) 
+    static foreach( m; __traits( allMembers, CLS ) )
+        static if ( __traits(isStaticFunction, __traits(getMember, CLS, m)) ) 
             static if ( m.startsWith( "to_" ) )
-                __traits(getMember, T, m)( o, d );
+                __traits(getMember, CLS, m)( o, d );
 }
 
 
@@ -275,18 +278,6 @@ unittest
         }
     }
 
-    class Chip_Selected : Chip
-    {
-        mixin OMixin!();
-
-        override
-        void la( Renderer renderer )
-        {
-            import std.stdio : writeln;
-            writeln( "Chip_Selected.Draw" );
-        }
-    }
-
     class Chip_Hovered : Chip
     {
         mixin OMixin!();
@@ -299,7 +290,7 @@ unittest
         }
     }
 
-
+    //
     auto renderer = new Renderer();
 
     auto chip = new Chip();
