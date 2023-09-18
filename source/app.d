@@ -10,9 +10,13 @@ void main()
     }
 
     import ui.window : WindowSensor;
+    auto window_sensor = new WindowSensor();
+    auto box = new Box();
+    box.go( 0, 0 );
+    window_sensor ~= box;
 
     //
-    game.sensors ~= new WindowSensor();
+    game.sensors ~= window_sensor;
     game.sensors ~= &EachSensor;
     //game.sensors ~= function ( D d ) { import std.stdio; writeln( "EachLambdaSensor: ", d ); };
 
@@ -20,3 +24,10 @@ void main()
     game.go();	
 }
 
+
+import cls.o;
+class Box : O
+{
+	// rect 
+	// la
+}

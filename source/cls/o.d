@@ -1,6 +1,5 @@
 module cls.o;
 
-import std.container.dlist : DList;
 import bindbc.sdl;
 import types;
 import la;
@@ -20,27 +19,62 @@ import la;
 // O
 //   ma!T
 //   ma!T( T_args )
-
 abstract
 class O
 {
     alias T = typeof(this);
 
-    // virtual functions
-    // sensable
-    void sense( D d ) {};
-    // visable
+    mixin SenseAble!T;
+    mixin LaAble!T;
+    mixin VAble!(T,O);
+    mixin StateAble!T;
+}
+
+
+mixin template SenseAble( T )
+{
+
+    template isDerivedFromInterface(A) 
+    { 
+        import std.traits;
+        import std.meta;
+        import std.algorithm.searching;
+
+        template isEqual(A) { enum isEqual = is( T == A ); }
+
+        static if ( anySatisfy!( isEqual!ISenseAble, InterfacesTuple!T ) )
+            enum isDerivedFromInterface = true;
+        else
+            enum isDerivedFromInterface = false;
+    }
+
+    void sense( D d ) 
+    {
+        //
+    };
+
+    //
+    static if( isDerivedFromInterface!IVAble )
+    void sense_recursive( D d )
+    {
+        foreach( o; this.v )
+            o.sense( d );
+    }
+}
+
+mixin template LaAble( T )
+{
     void la( Renderer renderer ) {};
+}
 
-    // Inner content
-    DList!T v;
-
-    // vars
-    //   ...
-
+mixin template VAble( T, TCHILDS )
+{
+    import std.container.dlist : DList;
+    DList!TCHILDS v;
 
     // 
-    auto ma(T,ARGS...)( ARGS args )
+    auto ma(TC,ARGS...)( ARGS args )
+        // if ( TC derrived from TCHILDS )
     {
         // ma child of class T
         // ma!T
@@ -48,7 +82,7 @@ class O
         // ma!T( T_args )
         //   new T
         //   add in to this.v
-        auto b = new T( args );
+        auto b = new TC( args );
 
         this.v ~= b;
 
@@ -57,7 +91,7 @@ class O
 
 
     // foreach( o; this )...
-    int opApply(scope int delegate(O) dg)
+    int opApply(scope int delegate(TCHILDS) dg)
     {
         foreach( o; v )
         {
@@ -69,7 +103,7 @@ class O
     }    
 
     // foreach_reverse( o; this )...
-    int opApplyReverse(scope int delegate(O) dg)
+    int opApplyReverse(scope int delegate(TCHILDS) dg)
     {
         foreach_reverse( o; v )
         {
@@ -81,6 +115,21 @@ class O
     }
 
 
+    void opOpAssign( string op : "~" )( TCHILDS b )
+    {
+        // o
+        //   v <- b
+        v ~= b;
+    }
+
+    void Out( TCHILDS b )
+    {
+        // v.remove( b )
+    }
+}
+
+mixin template StateAble( T )
+{
     //
     void to(CLS)()
     {
@@ -106,29 +155,8 @@ class O
 
         //
         this.__vptr = cast(immutable(void*)*)typeid(CLS).vtbl.ptr;
-    }
-
-
-    void opOpAssign( string op : "~" )( O b )
-    {
-        // o
-        //   v <- b
-        v ~= b;
-    }
-
-    void Out( O b )
-    {
-        // v.remove( b )
-    }
-
-
-    void sense_recursive( D d )
-    {
-        foreach( o; this.v )
-            o.sense( d );
-    }
+    }    
 }
-
 
 // struct Chip
 //   O _super;
@@ -292,4 +320,26 @@ unittest
             writeln( "Chip_Hovered.Draw" );
         }
     }
+}
+
+
+interface ISenseAble
+{
+    void sense( D d );
+}
+interface ILaAble
+{
+    void la( Renderer renderer );
+}
+interface IVAble 
+{
+    auto ma(T,ARGS...)( ARGS args );
+    int opApply(scope int delegate(O) dg);
+    int opApplyReverse(scope int delegate(O) dg);
+    void opOpAssign( string op : "~" )( O b );
+    void Out( O b );
+}
+interface IStateAble
+{
+    void to(CLS)();
 }

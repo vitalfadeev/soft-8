@@ -3,11 +3,22 @@ module platform.sdl.ui.wubdiw;
 version(SDL):
 import bindbc.sdl;
 import game;
-import sensor;
 import types;
+import cls.o : O;
+import cls.o : IVAble, ILaAble, ISenseAble, IStateAble;
+import cls.o : VAble,  LaAble,  SenseAble,  StateAble;
 
-class WindowSensor : ISensor
+
+class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
 {
+    alias T = typeof(this);
+
+    mixin SenseAble!T;
+    //mixin LaAble!T;
+    mixin VAble!(T,O);
+    //mixin StateAble!T;
+
+    // Custom memory
     SDL_Window*   window;
     SDL_Renderer* renderer;
 

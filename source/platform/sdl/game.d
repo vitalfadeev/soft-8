@@ -36,6 +36,7 @@ import bindbc.sdl;
 import pool : Pool;
 import sensor;
 import types;
+import cls.o : IVAble, ILaAble, ISenseAble, IStateAble;
 
 Game game;  // for each CPU core
             //   pool 1 for all CPU cores
@@ -76,7 +77,7 @@ struct Sensors
         this.sensors ~= toDelegate( b );
     }
 
-    void opOpAssign( string op : "~" )( ISensor b )
+    void opOpAssign( string op : "~" )( ISenseAble b )
     {
         this.sensors ~= &(b.sense);
     }
