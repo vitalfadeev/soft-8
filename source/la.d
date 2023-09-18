@@ -278,5 +278,3 @@ struct Rasterizer
         *p_cola = la.cola;
     }
 }
-
-

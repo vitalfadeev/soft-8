@@ -23,9 +23,9 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     SDL_Renderer* renderer;
 
 
-    this( int w = 640, int h = 480, string name = "SDL2 Window" )
+    this( Size size=Size(640,480), string name = "SDL2 Window" )
     {
-        _create_window( w, h, name );
+        _create_window( size, name );
         _create_renderer();
     }
 
@@ -104,8 +104,9 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
         SDL_Rect r;
         r.x = x;
         r.y = y;
-        r.w = size.w;
-        r.h = size.h;
+        auto px_size = size.to!PX;
+        r.w = px_size.x;
+        r.h = px_size.y;
 
         SDL_RenderDrawRect( renderer, &r );
     }
@@ -113,16 +114,11 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
 
     auto size()
     {
-        int iw,ih;
+        PX px_size;
 
-        SDL_GetWindowSizeInPixels( window, &iw, &ih );
+        SDL_GetWindowSizeInPixels( window, &px_size.x, &px_size.y );
 
-        import std.conv;
-        M16 x,y,w,h;
-        w = iw.to!M16;
-        h = ih.to!M16;
-
-        return Size( w, h ); // M16,M16
+        return px_size.to!LX; // M32,M32 -> F16.M16,F16.16
     }
 
     auto rect()
@@ -159,9 +155,11 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
 
 
     private
-    void _create_window(W,H)( W w, H h, string name )
+    void _create_window( Size size, string name )
     {
         import std.string;
+
+        auto px_size = size.to!PX();
 
         // Window
         window = 
@@ -169,7 +167,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
                 name.toStringz,
                 SDL_WINDOWPOS_CENTERED,
                 SDL_WINDOWPOS_CENTERED,
-                w, h,
+                px_size.x, px_size.y,
                 0
             );
 

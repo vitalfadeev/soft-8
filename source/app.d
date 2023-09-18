@@ -11,9 +11,9 @@ void main()
 
     import ui.window : WindowSensor;
     auto window_sensor = new WindowSensor();
-    auto box = new Box();
-    box.go( 0, 0 );
-    window_sensor ~= box;
+    //auto box = new Box();
+    //box.go( LX( 0,0 ) );
+    //window_sensor ~= box;
 
     //
     game.sensors ~= window_sensor;

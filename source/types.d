@@ -309,8 +309,121 @@ struct Rect
 }
 
 
-struct Size
+// SX
+// LX
+// PX
+//
+// Sense element 
+//   sensel 
+//   sx
+// Location element
+//   locxel
+//   lx
+// picture element
+//   pixel
+//   px
+
+// sx -> lx -> px
+//
+// px -> lx -> sx
+//
+// px
+//   640 x 480                      m16 x m16
+// lx 
+//   640.00 x 480.00  fixed 16.16   m32 x m32
+// sx
+//   640 x 480                      m16 x m16
+
+version(SDL)
 {
-    M16 w;
-    M16 h;
+    alias PX_X = int;
+    alias PX_Y = int;  // PX_TX
 }
+else
+{
+    alias PX_X = M16;
+    alias PX_Y = M16;  // PX_TX
+}
+
+struct PX
+{
+    PX_X x; 
+    PX_Y y;
+
+    alias MAX_X=640;
+    alias MAX_Y=480;
+
+    LX to(T:LX)()
+    {
+        return LX( x, y );
+    }
+
+    SX to(T:SX)()
+    {
+        return SX();
+    }
+}
+
+struct LX
+{
+    // (x,y) or can be (c,s)
+    Fixed_16_16 x;
+    Fixed_16_16 y;
+
+    alias MAX_X=640;
+    alias MAX_Y=480;
+
+    this( M16 x, M16 y )
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    this( PX_X x, PX_Y y )
+    {
+        import std.conv;
+        this.x.h = x.to!(typeof(Fixed_16_16.h));
+        this.y.h = y.to!(typeof(Fixed_16_16.h));
+    }
+
+    PX to(T:PX)()
+    {
+        return 
+            PX(
+                // px         lx
+                // ------ = k ------
+                // px.max     lx.max
+                //
+                // px = k * lx * px.max / lx.max
+                this.x.to!(typeof(PX.x)),
+                this.y.to!(typeof(PX.y))
+            );
+    }
+
+    SX to(T:SX)()
+    {
+        return SX();
+    }
+}
+
+struct SX
+{
+    M16 x;
+    M16 y;
+
+    alias MAX_X=640;
+    alias MAX_Y=480;
+
+    LX to(T:LX)()
+    {
+        return LX();
+    }
+
+    PX to(T:PX)()
+    {
+        return PX();
+    }
+}
+
+
+alias Size = LX;

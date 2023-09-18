@@ -135,6 +135,12 @@ struct Fixed_16_16
     }
 
 
+    M16 to( M16 )()
+    {
+        return this.h;
+    }
+
+
     string toString()
     {
         import std.format;
