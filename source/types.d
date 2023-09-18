@@ -350,9 +350,6 @@ struct PX
     PX_X x; 
     PX_Y y;
 
-    alias MAX_X=640;
-    alias MAX_Y=480;
-
     LX to(T:LX)()
     {
         return LX( x, y );
@@ -369,9 +366,6 @@ struct LX
     // (x,y) or can be (c,s)
     Fixed_16_16 x;
     Fixed_16_16 y;
-
-    alias MAX_X=640;
-    alias MAX_Y=480;
 
     this( M16 x, M16 y )
     {
@@ -410,9 +404,6 @@ struct SX
 {
     M16 x;
     M16 y;
-
-    alias MAX_X=640;
-    alias MAX_Y=480;
 
     LX to(T:LX)()
     {

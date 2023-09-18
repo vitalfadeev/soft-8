@@ -75,7 +75,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     {
         auto rect = Rect( d.m );
         import std.stdio;
-        writeln( rect );
+        writeln( "  ", rect );
 
         la();
     }
