@@ -9,14 +9,13 @@ import cls.o : IVAble, ILaAble, ISenseAble, IStateAble;
 import cls.o : VAble,  LaAble,  SenseAble,  StateAble;
 
 
-class WindowSensor : ISenseAble, IVAble/*, ILaAble*/
+class WindowSensor : ISenseAble, IVAble, ILaAble
 {
     alias T = typeof(this);
 
     mixin SenseAble!T;
-    //mixin LaAble!T;
+    mixin LaAble!T;
     mixin VAble!(T,O);
-    //mixin StateAble!T;
 
     // Custom memory
     SDL_Window*   window;
@@ -30,6 +29,7 @@ class WindowSensor : ISenseAble, IVAble/*, ILaAble*/
     }
 
 
+    // ISenseAble
     void sense( D d )
     {
         switch ( d.t )                           // sensor
@@ -64,6 +64,7 @@ class WindowSensor : ISenseAble, IVAble/*, ILaAble*/
     }
 
 
+    // ILaAble
     void la_borders()
     {
         la_cola( 0xFF_FF_FF_FF );
@@ -135,6 +136,7 @@ class WindowSensor : ISenseAble, IVAble/*, ILaAble*/
     }
 
 
+    // private
     private
     void _create_window( PXSize size, string name )
     {
