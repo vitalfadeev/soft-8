@@ -452,3 +452,4 @@ struct SX
 
 
 alias LXSize = LX;
+alias PXSize = PX;

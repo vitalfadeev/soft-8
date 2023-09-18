@@ -23,7 +23,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     SDL_Renderer* renderer;
 
 
-    this( LXSize size=LXSize(640,480), string name="SDL2 Window" )
+    this( PXSize size=PXSize(640,480), string name="SDL2 Window" )
     {
         _create_window( size, name );
         _create_renderer();
@@ -145,11 +145,9 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
 
 
     private
-    void _create_window( LXSize size, string name )
+    void _create_window( PXSize size, string name )
     {
         import std.string;
-
-        auto px_size = size.to!PX();
 
         // Window
         window = 
@@ -157,7 +155,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
                 name.toStringz,
                 SDL_WINDOWPOS_CENTERED,
                 SDL_WINDOWPOS_CENTERED,
-                px_size.x, px_size.y,
+                size.x, size.y,
                 0
             );
 
