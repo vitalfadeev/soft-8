@@ -47,19 +47,10 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
         if ( d.button.button == SDL_BUTTON_LEFT )    // sub sensor
         {
             game.pool ~= DT_MOUSE_LEFT_PRESSED;      // action
-            game.pool ~= send_la();                  // action
+            game.pool ~= D_LA( rect );      // action
         }
     }
 
-
-    auto send_la()
-    {
-        SDL_Event e;
-        e.type = DT_LA;
-        e.user.data1 = rect.to!MPTR(); // rect x,y,w,h
-        //e.user.data2 = ...;
-        return D(e);
-    }
 
     //
     pragma( inline, true )

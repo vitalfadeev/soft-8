@@ -250,6 +250,20 @@ version(SDL)
         import std.format;
         return format!"UserEvent_0x%X"( t );
     }
+
+    struct D_LA
+    {
+        SDL_Event e;
+        alias e this;
+
+        this( LXRect rect )
+        {        
+            e.type = DT_LA;
+            e.user.data1 = rect.to!MPTR();
+        }
+    }
+
+
 }
 else
 {
