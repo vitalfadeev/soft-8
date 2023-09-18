@@ -3,12 +3,6 @@ import game;
 
 void main()
 {
-    void EachSensor( D d )
-    {
-		import std.stdio;
-        writeln( "EachSensor: ", d );                                        // action
-    }
-
     auto window = new Window();
     auto box = window.ma!Box();
     box.pos  = LX( 0,0 );
@@ -16,7 +10,10 @@ void main()
 
     //
     game.sensors ~= window;
-    game.sensors ~= &EachSensor;
+    game.sensors ~= 
+    	function ( D d ) { 
+    		import std.stdio; writeln( "EachSensor: ", d ); 
+    	};
 
     //
     game.go();	
