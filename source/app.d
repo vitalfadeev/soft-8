@@ -11,9 +11,10 @@ void main()
 
     import ui.window : WindowSensor;
     auto window_sensor = new WindowSensor();
-    //auto box = new Box();
-    //box.go( LX( 0,0 ) );
-    //window_sensor ~= box;
+    auto box = new Box();
+    box.pos  = LX( 0,0 );
+    box.size = LX( 100,100 );
+    window_sensor ~= box;
 
     //
     game.sensors ~= window_sensor;
@@ -28,6 +29,18 @@ void main()
 import cls.o;
 class Box : O
 {
-	// rect 
-	// la
+	@property LX     pos;
+	@property LX     size;
+	@property LXRect rect;
+
+	void go( LX pos )
+	{
+		this.pos = pos;
+		this.la();
+	}
+
+	void la()
+	{
+		//
+	}
 }
