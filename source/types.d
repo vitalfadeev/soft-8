@@ -281,8 +281,8 @@ struct LXRect
     {    
         struct
         {    
-            LX p;
-            LX s;
+            LX p;  // pos
+            LX s;  // size
         }
         MPTR mptr;
     }
@@ -310,16 +310,16 @@ struct PXRect
     {
         struct
         {
-            PX pos; 
-            PX size;
+            PX p;  // pos
+            PX s;  // size
         }
         MPTR mptr;
     };
 
     this( M16 x, M16 y, M16 w, M16 h )
     {
-        this.pos  = PX(x,y);
-        this.size = PX(w,h);
+        this.p = PX(x,y);
+        this.s = PX(w,h);
     }
 
     this( MPTR mptr )
