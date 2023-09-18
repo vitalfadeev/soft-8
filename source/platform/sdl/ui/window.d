@@ -23,7 +23,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     SDL_Renderer* renderer;
 
 
-    this( Size size=Size(640,480), string name = "SDL2 Window" )
+    this( Size size=Size(640,480), string name="SDL2 Window" )
     {
         _create_window( size, name );
         _create_renderer();
@@ -38,14 +38,6 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
             case DT_LA:              on_DT_LA( d ); break;
             default: return;
         }
-
-        //
-        game.pool ~= DT_MOUSE_LEFT_PRESSED;  // action
-
-        // ANY CODE
-        //   check d.m
-        //   pool.put( d(sid,m) )
-        //   direct action
     }
 
 
@@ -64,7 +56,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     {
         SDL_Event e;
         e.type = DT_LA;
-        e.user.data1 = rect.toVoidPtr(); // rect x,y,w,h
+        e.user.data1 = rect.to!MPTR(); // rect x,y,w,h
         //e.user.data2 = ...;
         return D(e);
     }
@@ -73,7 +65,7 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     pragma( inline, true )
     void on_DT_LA( D d )
     {
-        auto rect = Rect( d.m );
+        auto rect = LXRect( d.m );
         import std.stdio;
         writeln( "  ", rect );
 
@@ -112,30 +104,28 @@ class WindowSensor : ISenseAble/*, IVAble, ILaAble*/
     }
 
 
+    auto pos()
+    {
+        PX px_pos;
+
+        SDL_GetWindowPosition( window, &px_pos.x, &px_pos.y );
+
+        return px_pos.to!LX; // M16,M16,M16,M16
+    }
+
+
     auto size()
     {
         PX px_size;
 
         SDL_GetWindowSizeInPixels( window, &px_size.x, &px_size.y );
 
-        return px_size.to!LX; // M32,M32 -> F16.M16,F16.16
+        return px_size.to!LX; // M32,M32 -> F16.16,F16.16
     }
 
     auto rect()
     {
-        int ix,iy,iw,ih;
-
-        SDL_GetWindowPosition( window, &ix, &iy );
-        SDL_GetWindowSizeInPixels( window, &iw, &ih );
-
-        import std.conv;
-        M16 x,y,w,h;
-        x = ix.to!M16;
-        y = iy.to!M16;
-        w = iw.to!M16;
-        h = ih.to!M16;
-
-        return Rect( x, y, w, h ); // M16,M16,M16,M16
+        return LXRect( pos, size ); // M16,M16,M16,M16
     }
 
 

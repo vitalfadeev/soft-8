@@ -275,36 +275,62 @@ version(SDL)
 }
 
 
-struct Rect
+struct LXRect
+{
+    union
+    {    
+        struct
+        {    
+            LX p;
+            LX s;
+        }
+        MPTR mptr;
+    }
+
+    this( LX lx_pos, LX lx_size )
+    {
+        this.p = lx_pos;
+        this.s = lx_size;
+    }
+
+    this( MPTR mptr )
+    {
+        this.mptr = mptr;
+    }
+
+    MPTR to(T:MPTR)()
+    {
+        return mptr;
+    }
+}
+
+struct PXRect
 {
     union
     {
         struct
         {
-            M16 x; // X a
-            M16 y;
-            M16 w;
-            M16 h;
+            PX pos; 
+            PX size;
         }
-        void*  p;
+        MPTR mptr;
     };
 
     this( M16 x, M16 y, M16 w, M16 h )
     {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+        this.pos  = PX(x,y);
+        this.size = PX(w,h);
     }
 
-    this( void* ptr )
+    this( MPTR mptr )
     {
-        p = ptr;
+        this.mptr = mptr;
     }
 
-    void* toVoidPtr()
+
+    MPTR to(T:MPTR)()
     {
-        return p;
+        return mptr;
     }
 }
 
@@ -389,6 +415,14 @@ struct LX
                 // px.max     lx.max
                 //
                 // px = k * lx * px.max / lx.max
+                //
+                // sx = 3x3
+                //      touch 3x3
+                // lx = 65536x65536
+                //      map 16368 x 16368
+                // px = 640x480
+                //      window 640x480
+
                 this.x.to!(typeof(PX.x)),
                 this.y.to!(typeof(PX.y))
             );
