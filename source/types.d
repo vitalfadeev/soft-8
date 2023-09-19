@@ -482,6 +482,18 @@ struct SX_(X,Y)
         static assert( TXY.sizeof <= MPTR.sizeof, "Expect TXY <= MPTR" );
         return cast(MPTR)xy;
     }
+
+
+    string toString()
+    {
+        import std.format;
+        return 
+            format!"%s( %d,%d )"(
+                typeof(this).stringof,
+                x,
+                y
+            );
+    }
 }
 
 
@@ -521,6 +533,17 @@ struct OX_(X,Y)
     {
         static assert( TXY.sizeof <= MPTR.sizeof, "Expect TXY <= MPTR" );
         return cast(MPTR)xy;
+    }
+
+    string toString()
+    {
+        import std.format;
+        return 
+            format!"%s( %d,%d )"(
+                typeof(this).stringof,
+                x.h,
+                y.h
+            );
     }
 }
 
@@ -606,6 +629,17 @@ struct PX_(X,Y)
     T opBinary( string op : "+" )( T b )
     {
         return T( x + b.x, y + b.y );
+    }
+
+    string toString()
+    {
+        import std.format;
+        return 
+            format!"%s( %d,%d )"(
+                typeof(this).stringof,
+                x,
+                y
+            );
     }
 }
 
