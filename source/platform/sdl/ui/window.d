@@ -32,17 +32,6 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
 
 
     // ISenseAble
-    //void sense( D d )
-    //{
-    //    switch ( d.t )                           // sensor
-    //    {
-    //        case DT_MOUSEBUTTONDOWN: on_DT_MOUSEBUTTONDOWN( d ); break;
-    //        case DT_LA:              on_DT_LA( d ); break;
-    //        default: return;
-    //    }
-    //}
-
-
     pragma( inline, true )
     void on_DT_MOUSEBUTTONDOWN( D d )
     {
@@ -55,8 +44,6 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
         }
     }
 
-
-    //
     pragma( inline, true )
     void on_DT_LA( D d )
     {
@@ -126,38 +113,7 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
     }
 
 
-    // private
-    private
-    void _create_window( PX size, string name )
-    {
-        import std.string;
-
-        // Window
-        window = 
-            SDL_CreateWindow(
-                name.toStringz,
-                SDL_WINDOWPOS_CENTERED,
-                SDL_WINDOWPOS_CENTERED,
-                size.x, size.y,
-                0
-            );
-
-        if ( !window )
-            throw new SDLException( "create_window" );
-
-        // Update
-        SDL_UpdateWindowSurface( window );    
-    }
-
-
-    private
-    void _create_renderer()
-    {
-        renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_SOFTWARE );
-    }
-
-
-    //
+    // pos, size, rect
     auto pos(T=PX)()
         if ( is( t == PX ) || is( T == OX ) )
     {
@@ -198,5 +154,36 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
     auto pxpx()
     {
         return PXPX( px_, _px ); // M16,M16,M16,M16
+    }
+
+
+    // private
+    private
+    void _create_window( PX size, string name )
+    {
+        import std.string;
+
+        // Window
+        window = 
+            SDL_CreateWindow(
+                name.toStringz,
+                SDL_WINDOWPOS_CENTERED,
+                SDL_WINDOWPOS_CENTERED,
+                size.x, size.y,
+                0
+            );
+
+        if ( !window )
+            throw new SDLException( "create_window" );
+
+        // Update
+        SDL_UpdateWindowSurface( window );    
+    }
+
+
+    private
+    void _create_renderer()
+    {
+        renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_SOFTWARE );
     }
 }
