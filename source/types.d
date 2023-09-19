@@ -155,13 +155,17 @@ struct Renderer
 
     void la()
     {
-        SDL_RenderDrawPoint( renderer, 0, 0 );
+        la( center );
+    }
+
+    void la( PX px )
+    {
+        SDL_RenderDrawPoint( renderer, px.x, px.y );
     }
 
     void la( OX ox )
     {
-        auto px = ox.to!PX + center;
-        SDL_RenderDrawPoint( renderer, px.x, px.y );
+        la( ox.to!PX + center );
     }
 
     PX center()

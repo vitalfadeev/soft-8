@@ -29,7 +29,6 @@ class LA1 : O
     void la( Renderer renderer )
     {
     	renderer.la( ox );
-    	//renderer.la( ox );
     }
 }
 
