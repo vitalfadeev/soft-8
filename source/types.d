@@ -263,13 +263,13 @@ version(SDL)
         alias _e this;
 
         pragma( inline, true )
-        auto t()
+        auto ref t()
         {
             return _e.type;
         }
 
         pragma( inline, true )
-        auto m()
+        auto ref m()
         {
             return _e.user.data1;
         }
@@ -311,25 +311,25 @@ version(SDL)
 
     struct D_LA
     {
-        SDL_UserEvent e;
-        alias e this;
+        D d;
+        alias d this;
 
         this( PXPX rect )
         {        
-            e = rect.to!D();
-            e.type  = DT_LA;
+            d = rect.to!D();
+            d.t = DT_LA;
         }
     }
 
     struct D_KEY_PRESSED
     {
-        SDL_UserEvent e;
-        alias e this;
+        D d;
+        alias d this;
 
         this( char a )
         {        
-            e.type  = DT_KEY_PRESSED;
-            e.data1 = cast(MPTR)a;
+            d.t  = DT_KEY_PRESSED;
+            d.m = cast(MPTR)a;
         }
     }
 }
@@ -578,16 +578,16 @@ struct PX_(X,Y)
 
     auto to(T:D)()
     {
-        SDL_UserEvent d;
-        alias TDATA1 = typeof( d.data1 );
-        alias TDATA2 = typeof( d.data2 );
+        D d;
+        alias TDATA1 = typeof( d.user.data1 );
+        alias TDATA2 = typeof( d.user.data2 );
 
         if ( TXY.sizeof <= TDATA1.sizeof )
-            d.data1 = cast(TDATA1)xy;
+            d.user.data1 = cast(TDATA1)xy;
         else
         {
-            d.data1 = cast(TDATA1)x;
-            d.data2 = cast(TDATA2)y;
+            d.user.data1 = cast(TDATA1)x;
+            d.user.data2 = cast(TDATA2)y;
         }
 
         return d;
@@ -670,16 +670,16 @@ struct PXPX
 
     auto to(T:D)()
     {
-        SDL_UserEvent d;
-        alias TDATA1 = typeof( d.data1 );
-        alias TDATA2 = typeof( d.data2 );
+        D d;
+        alias TDATA1 = typeof( d.user.data1 );
+        alias TDATA2 = typeof( d.user.data2 );
 
         if ( TPXPX.sizeof <= TDATA1.sizeof )
-            d.data1 = cast(TDATA1)pxpx;
+            d.user.data1 = cast(TDATA1)pxpx;
         else
         {
-            d.data1 = px_.to!TDATA1;
-            d.data2 = _px.to!TDATA2;
+            d.user.data1 = px_.to!TDATA1;
+            d.user.data2 = _px.to!TDATA2;
         }
 
         return d;

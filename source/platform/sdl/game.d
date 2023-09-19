@@ -244,18 +244,14 @@ void init_sdl()
 void send_la( PX xy )
 {
     auto d = xy.to!D;  // rect.xy_
-    d.type = DT_LA;
-    //e.user.data1 = xy.to!D();
-    //e.user.data2 = null;
+    d.t = DT_LA;
     game.pool ~= d;
 }
 
 void send_la( PXPX xyxy )
 {
     auto d = xyxy.to!D;  // rect.xy_
-    d.type = DT_LA;
-    //e.user.data1 = xyxy.xy_.to!D();
-    //e.user.data2 = xyxy._xy.to!D();
+    d.t = DT_LA;
     game.pool ~= d;
 }
 

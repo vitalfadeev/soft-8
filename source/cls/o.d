@@ -153,7 +153,6 @@ mixin template VAble( T )
 {
     import traits;
 
-
     V v;
 
     // 
