@@ -44,14 +44,15 @@ void main()
     V world;
     auto la1 = world.ma!LA1();
     auto la2 = world.ma!LA2();
-    auto lax = world.ma!LAX();
-    auto art = world.ma!Art();
     la2._ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
+    auto lax = world.ma!LAX();
     lax. ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX( 100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX(-100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX(-100,-100 ).to!OX;  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX( 100,-100 ).to!OX;  // (int,int) -> Fixed_16_16
+    auto art = world.ma!Art();
+    art._ox = PX(640,480);
 
     auto window = new Window();
     window.v = world;

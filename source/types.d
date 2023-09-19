@@ -746,10 +746,10 @@ struct OXOX
     {
         return 
             (
-                (ox_.x >= ox.x) &&
-                (ox_.y >= ox.y) &&
-                (_ox.x < ox.x) &&
-                (_ox.y < ox.y)
+                (ox.x >= ox_.x) &&
+                (ox.y >= ox_.y) &&
+                (ox.x  < _ox.x) &&
+                (ox.y  < _ox.y)
             );
     }
 }
