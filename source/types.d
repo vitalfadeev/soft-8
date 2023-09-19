@@ -183,11 +183,12 @@ struct Renderer
     void la( OX ox, OX[] _oxs )
     {
         auto px_ = ox.to!PX + center;
-        PX _px;
+        PX   _px;
 
         foreach( _ox; _oxs )
         {
             _px = _ox.to!PX + center;
+            
             la( px_, _px );
 
             px_ = _px;
