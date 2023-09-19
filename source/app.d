@@ -77,6 +77,7 @@ class LA1 : O
     	//
     }
 
+    override
     void la( Renderer renderer )
     {
     	renderer.la( ox );
@@ -90,6 +91,7 @@ class LA2 : O
     OX ox;
     OX _ox;
 
+    override
     void la( Renderer renderer )
     {
     	renderer.la( ox, _ox );
@@ -103,6 +105,7 @@ class LAX : O
     OX ox;
     OX[] _oxs;
 
+    override
     void la( Renderer renderer )
     {
     	renderer.la( ox, _oxs );

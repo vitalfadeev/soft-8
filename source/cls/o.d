@@ -102,7 +102,7 @@ void sense_(T)( T o, D d )
                 pragma( msg, "         ", m );
                 if (d.type == mixin(m[3..$])) 
                 { 
-                    mixin( "o."~m~"( d );" ); 
+                    __traits(getMember, o, m)( d ); 
                     return; 
                 }
             }
@@ -115,7 +115,7 @@ void sense_(T)( T o, D d )
                 pragma( msg, "          ", m );
                 if (d.type == mixin(m[3..$]))
                 { 
-                    mixin( "o."~m~"( d );" ); 
+                    __traits(getMember, o, m)( d ); 
                     return; 
                 }
             }
@@ -132,7 +132,7 @@ void try_to_(T)( T o, D d )
     static foreach( m; __traits( allMembers, T ) )
         static if ( isCallable!(__traits(getMember, T, m)) )
             static if ( m.startsWith( "to_" ) )
-                mixin( "o."~m~"( d );" ); 
+                __traits(getMember, o, m)( d ); 
 }
 
 
@@ -146,7 +146,7 @@ void sense_v(T)( T o, D d )
 
 mixin template LaAble( T )
 {
-    //void la( Renderer renderer ) {};
+    void la( Renderer renderer ) {};
 }
 
 mixin template VAble( T )
