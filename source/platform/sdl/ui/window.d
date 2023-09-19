@@ -24,7 +24,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     SDL_Renderer* renderer;
 
 
-    this( PXSize size=PXSize(640,480), string name="SDL2 Window" )
+    this( PX size=PX(640,480), string name="SDL2 Window" )
     {
         _create_window( size, name );
         _create_renderer();
@@ -58,9 +58,9 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     pragma( inline, true )
     void on_DT_LA( D d )
     {
-        auto rect = LXRect( d.m );
+        auto pxpx = d.to!PXPX;
         import std.stdio;
-        writeln( "  ", rect );
+        writeln( "  ", pxpx );
 
         la();
     }
@@ -82,7 +82,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
         SDL_SetRenderDrawColor( renderer, r, g, b, a );
     }
 
-    void la_rect( M16 x, M16 y, LXSize size )
+    void la_rect( M16 x, M16 y, PX size )
     {
         // inner rect
         //   0,10 = line 0..9 including 9
@@ -90,9 +90,8 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
         SDL_Rect r;
         r.x = x;
         r.y = y;
-        auto px_size = size.to!PX;
-        r.w = px_size.x;
-        r.h = px_size.y;
+        r.w = size.x;
+        r.h = size.y;
 
         SDL_RenderDrawRect( renderer, &r );
     }
@@ -104,7 +103,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
 
         SDL_GetWindowPosition( window, &px_pos.x, &px_pos.y );
 
-        return px_pos.to!LX; // M16,M16,M16,M16
+        return px_pos; // M16,M16,M16,M16
     }
 
 
@@ -114,12 +113,12 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
 
         SDL_GetWindowSizeInPixels( window, &px_size.x, &px_size.y );
 
-        return px_size.to!LX; // M32,M32 -> F16.16,F16.16
+        return px_size; // M32,M32 -> F16.16,F16.16
     }
 
     auto rect()
     {
-        return LXRect( pos, size ); // M16,M16,M16,M16
+        return PXPX( pos, size ); // M16,M16,M16,M16
     }
 
 
@@ -140,7 +139,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
 
     // private
     private
-    void _create_window( PXSize size, string name )
+    void _create_window( PX size, string name )
     {
         import std.string;
 

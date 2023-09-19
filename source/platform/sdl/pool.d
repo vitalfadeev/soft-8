@@ -39,6 +39,12 @@ struct Pool
     }
 
     pragma( inline, true )
+    void opOpAssign( string op : "~" )( SDL_UserEvent d )
+    {
+        SDL_PushEvent( cast(SDL_Event*)&d ); // The event is copied into the queue.
+    }
+
+    pragma( inline, true )
     void opOpAssign( string op : "~" )( D_LA d )
     {
         SDL_PushEvent( cast(SDL_Event*)&d ); // The event is copied into the queue.

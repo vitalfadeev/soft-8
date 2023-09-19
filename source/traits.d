@@ -26,7 +26,22 @@ template isSameInstaneSize(CLS,T)
 
 // TXYXY = Detect8bitAlignedType!(TX,TX)
 // Detect8bitAlignedType!(uint,uint) == ulong
-tempalte Detect8bitAlignedType(TX,TY)
+template Detect8bitAlignedType(TX,TY)
 {
-    //
+    static if ( TX.sizeof + TY.sizeof <= 8 )
+        alias Detect8bitAlignedType = ubyte;
+    else
+    static if ( TX.sizeof + TY.sizeof <= 16 )
+        alias Detect8bitAlignedType = ushort;
+    else
+    static if ( TX.sizeof + TY.sizeof <= 32 )
+        alias Detect8bitAlignedType = uint;
+    else
+    static if ( TX.sizeof + TY.sizeof <= 64 )
+        alias Detect8bitAlignedType = ulong;
+    else
+    static if ( TX.sizeof + TY.sizeof <= 128 )
+        alias Detect8bitAlignedType = ucent;
+    else
+        static assert( 0, "Expected size TX+TY <= 128" );
 }

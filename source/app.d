@@ -5,8 +5,8 @@ void main()
 {
     auto window = new Window();
     auto box = window.ma!Box();
-    box.pos  = LX( 0,0 );
-    box.size = LX( 100,100 );
+    //box.pos  = OX( 0,0 );
+    //box.size = OX( 100,100 );
 
     //
     game.sensors ~= window;
@@ -24,19 +24,4 @@ import cls.o;
 class Box : O
 {
     mixin OMixin!();
-
-	@property LX     pos;
-	@property LX     size;
-	@property LXRect rect;
-
-	void go( LX pos )
-	{
-		this.pos = pos;
-		this.la();
-	}
-
-	void la()
-	{
-		//
-	}
 }

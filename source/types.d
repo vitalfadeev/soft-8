@@ -4,6 +4,7 @@ module types;
 //import std.format;
 import std.stdio;
 import std.traits;
+import traits;
 import fixed_16_16;
 
 
@@ -226,6 +227,14 @@ version(SDL)
             return _e.user.data1;
         }
 
+
+        auto to(T:PXPX)()
+        {
+            PX px_ = PX.fromMPTR( _e.user.data1 );
+            PX _px = PX.fromMPTR( _e.user.data2 );
+            return PXPX( px_, _px );
+        }
+
         string toString()
         {
             import std.format;
@@ -258,10 +267,10 @@ version(SDL)
         SDL_UserEvent e;
         alias e this;
 
-        this( LXRect rect )
+        this( PXPX rect )
         {        
+            e = rect.to!D();
             e.type  = DT_LA;
-            e.data1 = rect.to!MPTR();
         }
     }
 
@@ -301,64 +310,6 @@ version(SDL)
 }
 
 
-struct LXRect
-{
-    union
-    {    
-        struct
-        {    
-            LX p;  // pos
-            LX s;  // size
-        }
-        MPTR mptr;
-    }
-
-    this( LX lx_pos, LX lx_size )
-    {
-        this.p = lx_pos;
-        this.s = lx_size;
-    }
-
-    this( MPTR mptr )
-    {
-        this.mptr = mptr;
-    }
-
-    MPTR to(T:MPTR)()
-    {
-        return mptr;
-    }
-}
-
-struct PXRect
-{
-    union
-    {
-        struct
-        {
-            PX p;  // pos
-            PX s;  // size
-        }
-        MPTR mptr;
-    };
-
-    this( M16 x, M16 y, M16 w, M16 h )
-    {
-        this.p = PX(x,y);
-        this.s = PX(w,h);
-    }
-
-    this( MPTR mptr )
-    {
-        this.mptr = mptr;
-    }
-
-
-    MPTR to(T:MPTR)()
-    {
-        return mptr;
-    }
-}
 
 
 // SX
@@ -519,7 +470,6 @@ struct PX_(X,Y)
 {
     enum X_MAX = 640;
     enum Y_MAX = 480;
-    alias TXY = Detect8bitAlignedType!(X,Y);  // M8, M16, M32, M64
 
     union
     {
@@ -529,6 +479,15 @@ struct PX_(X,Y)
             Y y;
         }
         TXY xy;
+    }
+    alias TXY = Detect8bitAlignedType!(X,Y);  // M8, M16, M32, M64
+
+    static
+    PX_ fromMPTR( MPTR mptr )
+    {
+        PX_ px;
+        px.xy = cast(TXY)mptr;
+        return px;
     }
 
     auto to(T:OX)()
@@ -554,13 +513,15 @@ struct PX_(X,Y)
     auto to(T:D)()
     {
         SDL_UserEvent d;
+        alias TDATA1 = typeof( d.data1 );
+        alias TDATA2 = typeof( d.data2 );
 
-        if ( TXY.sizeof <= MPTR.sizeof )
-            d.user.data1 = cast(MPTR)xy;
+        if ( TXY.sizeof <= TDATA1.sizeof )
+            d.data1 = cast(TDATA1)xy;
         else
         {
-            d.user.data1 = cast(MPTR)x;
-            d.user.data2 = cast(MPTR)y;
+            d.data1 = cast(TDATA1)x;
+            d.data2 = cast(TDATA2)y;
         }
 
         return d;
@@ -609,8 +570,15 @@ else
 
 struct PXPX
 {
-    PX px_;
-    PX _px;
+    union
+    {
+        struct
+        {
+            PX px_;
+            PX _px;
+        }
+        TPXPX pxpx;
+    }    
     alias TPXPX = Detect8bitAlignedType!(PX,PX);
 
     // x,y to R1
@@ -619,40 +587,24 @@ struct PXPX
     // x,y to e.user.data1, e.user.data2
     auto to(T:MPTR)()
     {
-        static assert( (TLARGEST.sizeof + TLARGEST.sizeof) <= MPTR.sizeof, "Expect TXY <= MPTR" );
+        static assert( TPXPX.sizeof <= MPTR.sizeof, "Expect PXPX <= MPTR" );
         return cast(MPTR)xy;
     }
 
     auto to(T:D)()
     {
         SDL_UserEvent d;
+        alias TDATA1 = typeof( d.data1 );
+        alias TDATA2 = typeof( d.data2 );
 
-        if ( TXY.sizeof <= MPTR.sizeof )
-            d.user.data1 = cast(MPTR)xy;
+        if ( TPXPX.sizeof <= TDATA1.sizeof )
+            d.data1 = cast(TDATA1)pxpx;
         else
         {
-            d.user.data1 = cast(MPTR)x;
-            d.user.data2 = cast(MPTR)y;
+            d.data1 = px_.to!TDATA1;
+            d.data2 = _px.to!TDATA2;
         }
 
         return d;
     }
-}
-
-void send_la( PX xy )
-{
-    auto d = xy.to!D;  // rect.xy_
-    d.type = D_LA;
-    //e.user.data1 = xy.to!D();
-    //e.user.data2 = null;
-    game.pool ~= d;
-}
-
-void send_la( PXPX xyxy )
-{
-    auto d = xyxy.to!D;  // rect.xy_
-    d.type = D_LA;
-    //e.user.data1 = xyxy.xy_.to!D();
-    //e.user.data2 = xyxy._xy.to!D();
-    game.pool ~= d;
 }
