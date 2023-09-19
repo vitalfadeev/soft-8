@@ -117,9 +117,49 @@ class LAX : O
     }
 }
 
+enum CurTool
+{
+	_,
+	LA1,
+	LA2,
+	LAX,
+}
+
 class Art : O
 {
     mixin OMixin!();
+    
+    LA1[] la1s;
+    LA2[] la2s;
+    LAX[] laxs;
+
+    CurTool cur_tool;
+
+    void on_DT_KEYDOWN( D d )
+    {
+		import bindbc.sdl;
+
+    	if ( d.key.keysym.scancode == SDL_SCANCODE_F1 )
+    	{
+    		cur_tool = CurTool.LA1;
+	    	import std.stdio : writeln;
+	    	writeln(cur_tool);
+	    }
+
+    	if ( d.key.keysym.scancode == SDL_SCANCODE_F2 )
+    	{
+    		cur_tool = CurTool.LA2;
+	    	import std.stdio : writeln;
+	    	writeln(cur_tool);
+	    }
+
+    	if ( d.key.keysym.scancode == SDL_SCANCODE_F3 )
+    	{
+    		cur_tool = CurTool.LAX;
+	    	import std.stdio : writeln;
+	    	writeln(cur_tool);
+	    }
+    }
 
     void on_DT_MOUSEBUTTONDOWN( D d )
     {

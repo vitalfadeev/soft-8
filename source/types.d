@@ -227,6 +227,7 @@ enum: DT
     // ...
     //
     DT_MOUSEBUTTONDOWN = SDL_MOUSEBUTTONDOWN,
+    DT_KEYDOWN         = SDL_KEYDOWN,
     // game
     DT_USER_ = 0x8000,
     DT_MOUSE_LEFT_PRESSED,
