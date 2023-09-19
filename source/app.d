@@ -5,7 +5,8 @@ void main()
 {
     auto window = new Window();
     auto la1 = window.ma!LA1();
-    //la1.ox = PX( 0, 0 );  // (int,int) -> Fixed_16_16
+    auto la2 = window.ma!LA2();
+    la2._ox = PX( 100, 0 );  // (int,int) -> Fixed_16_16
 
     //
     game.sensors ~= window;
@@ -29,6 +30,19 @@ class LA1 : O
     void la( Renderer renderer )
     {
     	renderer.la( ox );
+    }
+}
+
+class LA2 : O
+{
+    mixin OMixin!();
+
+    OX ox;
+    OX _ox;
+
+    void la( Renderer renderer )
+    {
+    	renderer.la( ox, _ox );
     }
 }
 

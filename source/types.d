@@ -168,6 +168,18 @@ struct Renderer
         la( ox.to!PX + center );
     }
 
+    void la( PX px, PX _px )
+    {
+        import std.stdio : writeln;
+        writeln( "la: PX: ", px, ", ", _px );
+        SDL_RenderDrawLine( renderer, px.x, px.y, _px.x, _px.y );
+    }
+
+    void la( OX ox, OX _ox )
+    {
+        la( ox.to!PX + center, _ox.to!PX + center );
+    }
+
     PX center()
     {
         return PX( 640/2, 480/2 );
@@ -477,7 +489,7 @@ struct OX_(X,Y)
 
     auto to(T:PX)()
     {
-        return PX();
+        return PX( x.h, y.h );
     }
 
     auto to(T:MPTR)()
