@@ -11,13 +11,13 @@ import cls.o : VAble,  LaAble,  SenseAble,  StateAble;
 
 alias Window = WindowSensor;
 
-class WindowSensor : ISenseAble, IVAble!O, ILaAble
+class WindowSensor : ISenseAble, IVAble, ILaAble
 {
     alias T = typeof(this);
 
     mixin SenseAble!T;
     mixin LaAble!T;
-    mixin VAble!(T,O);
+    mixin VAble!T;
 
     // Custom memory
     SDL_Window*   window;
@@ -32,15 +32,15 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
 
 
     // ISenseAble
-    void sense( D d )
-    {
-        switch ( d.t )                           // sensor
-        {
-            case DT_MOUSEBUTTONDOWN: on_DT_MOUSEBUTTONDOWN( d ); break;
-            case DT_LA:              on_DT_LA( d ); break;
-            default: return;
-        }
-    }
+    //void sense( D d )
+    //{
+    //    switch ( d.t )                           // sensor
+    //    {
+    //        case DT_MOUSEBUTTONDOWN: on_DT_MOUSEBUTTONDOWN( d ); break;
+    //        case DT_LA:              on_DT_LA( d ); break;
+    //        default: return;
+    //    }
+    //}
 
 
     pragma( inline, true )
@@ -50,6 +50,8 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
         {
             game.pool ~= DT_MOUSE_LEFT_PRESSED;    // action
             game.pool ~= D_LA( pxpx );             // action
+
+            // + new la
         }
     }
 
@@ -71,7 +73,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     {
         //
     }
-    
+
     void la_borders()
     {
         la_cola( 0xFF_FF_FF_FF );
@@ -147,6 +149,33 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
         SDL_UpdateWindowSurface( window );    
     }
 
+
+    private
+    void _create_renderer()
+    {
+        renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_SOFTWARE );
+    }
+
+
+    //
+    auto pos(T=PX)()
+        if ( is( t == PX ) || is( T == OX ) )
+    {
+        return px_.to!T;
+    }
+
+    auto size(T=PX)()
+        if ( is( t == PX ) || is( T == OX ) )
+    {
+        return _px.to!T;
+    }
+
+    auto rect(T=PXPX)()
+        if ( is( t == PXPX ) || is( T == OXOX ) )
+    {
+        return pxpx.to!T;
+    }
+
     auto px_()
     {
         PX px;
@@ -169,12 +198,5 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     auto pxpx()
     {
         return PXPX( px_, _px ); // M16,M16,M16,M16
-    }
-
-
-    private
-    void _create_renderer()
-    {
-        renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_SOFTWARE );
     }
 }

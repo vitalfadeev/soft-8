@@ -45,3 +45,15 @@ template Detect8bitAlignedType(TX,TY)
     else
         static assert( 0, "Expected size TX+TY <= 128" );
 }
+
+
+// hasMember!(T, "sense")
+template hasMethod(T,string M)
+{
+    import std.traits;
+
+    static if ( hasMember!(T,M)/* && isCallable!(__traits(getMember,T,M))*/ )
+        enum hasMethod = true;
+    else
+        enum hasMethod = false;
+}

@@ -3,6 +3,44 @@ import game;
 
 void main()
 {
+	// window is part of world
+	// w is o
+	//        o
+	//        o
+	//        o
+	// give to o ables of window
+
+	// o is o
+	// o <- window
+	//   Window(o)
+	//
+	// Window(o)
+	//   ox = o.ox
+	//   o  = o
+	//
+	// windows from position
+	// windows from O
+	//
+	// Window(ox)
+	//   ox = ox
+	//
+	// Window(o)
+	//   o  = o
+	//
+	// Window
+	//   size = 640x480  // from center (320,240)
+	//
+	// events from window in to world
+	//
+	// Window
+	//   key -> focused
+	//   key -> each
+	//   key -> each recursive
+	//   mouse_over -> each
+	//   mouse_over -> each recursive
+	//   mouse_click -> focused
+	//   mouse_click -> each
+	//   mouse_click -> each recursive
     auto window = new Window();
     auto la1 = window.ma!LA1();
     auto la2 = window.ma!LA2();
@@ -31,6 +69,14 @@ class LA1 : O
     mixin OMixin!();
 
     OX ox;
+
+
+    pragma( inline, true )
+    void on_DT_MOUSEBUTTONDOWN( D d )
+    {
+    	//
+    }
+
 
     void la( Renderer renderer )
     {

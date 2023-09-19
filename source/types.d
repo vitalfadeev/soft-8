@@ -2,6 +2,7 @@ module types;
 
 //import std.conv;
 //import std.format;
+import std.container.dlist : DList;
 import std.traits;
 import traits;
 import fixed_16_16;
@@ -545,6 +546,11 @@ struct PX_(X,Y)
         return px;
     }
 
+    auto to(T:PX)()
+    {
+        return this;
+    }
+
     auto to(T:OX)()
     {
         OX ox;
@@ -657,6 +663,11 @@ struct PXPX
         return cast(MPTR)xy;
     }
 
+    auto to(T:PXPX)()
+    {
+        return this;
+    }
+
     auto to(T:D)()
     {
         SDL_UserEvent d;
@@ -674,3 +685,10 @@ struct PXPX
         return d;
     }
 }
+
+
+// O
+//   v o
+// IVAble
+import cls.o : O;
+alias V = DList!O;
