@@ -41,16 +41,19 @@ void main()
 	//   mouse_click -> focused
 	//   mouse_click -> each
 	//   mouse_click -> each recursive
-    auto window = new Window();
-    auto la1 = window.ma!LA1();
-    auto la2 = window.ma!LA2();
-    auto lax = window.ma!LAX();
+    V world;
+    auto la1 = world.ma!LA1();
+    auto la2 = world.ma!LA2();
+    auto lax = world.ma!LAX();
     la2._ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
     lax. ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX( 100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX(-100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX(-100,-100 ).to!OX;  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX( 100,-100 ).to!OX;  // (int,int) -> Fixed_16_16
+
+    auto window = new Window();
+    window.v = world;
 
     //
     game.sensors ~= window;

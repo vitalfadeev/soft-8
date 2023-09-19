@@ -159,17 +159,7 @@ mixin template VAble( T )
     auto ma(TCHILD,ARGS...)( ARGS args )
         // if ( TC derrived from O )
     {
-        // ma child of class T
-        // ma!T
-        // ma!T()
-        // ma!T( T_args )
-        //   new T
-        //   add in to this.v
-        auto b = new TCHILD( args );
-
-        this.v ~= b;
-
-        return b;
+        v.ma!TCHILD( args );
     }
 
 

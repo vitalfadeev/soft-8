@@ -497,6 +497,7 @@ struct OX_(X,Y)
 
     void opAssign( PX px )
     {
+        // convert PX -> OX
         x.h = cast(short)px.x;
         x.l = 0;
         y.h = cast(short)px.y;
@@ -691,4 +692,24 @@ struct PXPX
 //   v o
 // IVAble
 import cls.o : O;
-alias V = DList!O;
+struct V
+{
+    DList!O v;
+    alias v this;
+
+    auto ma(TCHILD,ARGS...)( ARGS args )
+        // if ( TC derrived from O )
+    {
+        // ma child of class T
+        // ma!T
+        // ma!T()
+        // ma!T( T_args )
+        //   new T
+        //   add in to this.v
+        auto b = new TCHILD( args );
+
+        this.v ~= b;
+
+        return b;
+    }
+}
