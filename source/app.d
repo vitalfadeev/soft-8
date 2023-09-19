@@ -105,7 +105,7 @@ class LAX : O
 {
     mixin OMixin!();
 
-    OX ox;
+    OX   ox;
     OX[] _oxs;
 
     override
