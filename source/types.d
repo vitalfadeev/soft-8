@@ -180,6 +180,20 @@ struct Renderer
         la( ox.to!PX + center, _ox.to!PX + center );
     }
 
+    void la( OX ox, OX[] _oxs )
+    {
+        auto px_ = ox.to!PX + center;
+        PX _px;
+
+        foreach( _ox; _oxs )
+        {
+            _px = _ox.to!PX + center;
+            la( px_, _px );
+
+            px_ = _px;
+        }
+    }
+
     PX center()
     {
         return PX( 640/2, 480/2 );
@@ -532,7 +546,12 @@ struct PX_(X,Y)
 
     auto to(T:OX)()
     {
-        return OX();
+        OX ox;
+        ox.x.h = cast(ushort)this.x;
+        ox.x.l = 0;
+        ox.y.h = cast(ushort)this.y;
+        ox.y.l = 0;
+        return ox;
     }
 
     auto to(T:IX)()
