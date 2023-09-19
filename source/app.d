@@ -126,16 +126,14 @@ class Art : O
 		import bindbc.sdl;
 
         if ( d.button.button == SDL_BUTTON_LEFT )  // sub sensor
-        {
-        	if ( hit_test( SX( d.button.x, d.button.y ).to!OX ) )
-        	{
-				import std.stdio : writeln;
-        		writeln("OK");
-        	}
-        }
+    	if ( has( SX( d.button.x, d.button.y ).to!OX ) )
+    	{
+			import std.stdio : writeln;
+    		writeln( "OK: at ", SX( d.button.x, d.button.y ) );
+    	}
     }
 
-    bool hit_test( OX ox )
+    bool has( OX ox )
     {
     	return oxox.has( ox );
     }

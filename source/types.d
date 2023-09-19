@@ -454,7 +454,7 @@ version(SDL)
 //   mouse position
 struct SX_(X,Y)
 {
-    alias TXY = Largest!(X,Y);
+    alias TXY = Detect8bitAlignedType!(X,Y);
 
     union
     {
