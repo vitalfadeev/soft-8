@@ -2,7 +2,6 @@ module types;
 
 //import std.conv;
 //import std.format;
-import std.stdio;
 import std.traits;
 import traits;
 import fixed_16_16;
@@ -150,7 +149,7 @@ struct L
 }
 
 
-class Renderer
+struct Renderer
 {
     SDL_Renderer* renderer;
 
@@ -161,8 +160,13 @@ class Renderer
 
     void la( OX ox )
     {
-        auto px = ox.to!PX;
+        auto px = ox.to!PX + center;
         SDL_RenderDrawPoint( renderer, px.x, px.y );
+    }
+
+    PX center()
+    {
+        return PX( 640/2, 480/2 );
     }
 }
 
@@ -489,6 +493,7 @@ struct PX_(X,Y)
 {
     enum X_MAX = 640;
     enum Y_MAX = 480;
+    alias T = typeof(this);
 
     union
     {
@@ -502,9 +507,9 @@ struct PX_(X,Y)
     alias TXY = Detect8bitAlignedType!(X,Y);  // M8, M16, M32, M64
 
     static
-    PX_ fromMPTR( MPTR mptr )
+    T fromMPTR( MPTR mptr )
     {
-        PX_ px;
+        T px;
         px.xy = cast(TXY)mptr;
         return px;
     }
@@ -544,6 +549,12 @@ struct PX_(X,Y)
         }
 
         return d;
+    }
+
+    // + - * /
+    T opBinary( string op : "+" )( T b )
+    {
+        return T( x + b.x, y + b.y );
     }
 }
 

@@ -67,7 +67,7 @@ mixin template SenseAble( T )
 
     //
     static if( isDerivedFromInterface!(T,IVAble!O) )
-    void sense_recursive( D d )
+    void sense_v( D d )
     {
         foreach( o; this.v )
             o.sense( d );
@@ -76,7 +76,7 @@ mixin template SenseAble( T )
 
 mixin template LaAble( T )
 {
-    void la( Renderer renderer ) {};
+    //void la( Renderer renderer ) {};
 }
 
 mixin template VAble( T, TCHILDS )
@@ -206,9 +206,9 @@ mixin template OsenseMixin(T)
         static if( isDerivedFromInterface!(T,IStateAble) )
         try_to!T( this, d );
 
-        // recursive sense
+        // recursive v sense
         static if( isDerivedFromInterface!(T,IVAble!O) )
-        sense_recursive( d );
+        sense_v( d );
     }
 }
 

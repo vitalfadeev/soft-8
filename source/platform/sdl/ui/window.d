@@ -67,6 +67,11 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
 
 
     // ILaAble
+    void la( Renderer renderer ) 
+    {
+        //
+    }
+    
     void la_borders()
     {
         la_cola( 0xFF_FF_FF_FF );
@@ -97,31 +102,6 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     }
 
 
-    auto px_()
-    {
-        PX px;
-
-        SDL_GetWindowPosition( window, &px.x, &px.y );
-
-        return px; // M16,M16,M16,M16
-    }
-
-
-    auto _px()
-    {
-        PX px;
-
-        SDL_GetWindowSizeInPixels( window, &px.x, &px.y );
-
-        return px; // M32,M32 -> F16.16,F16.16
-    }
-
-    auto pxpx()
-    {
-        return PXPX( px_, _px ); // M16,M16,M16,M16
-    }
-
-
     // LIGHT
     // la( xy )               // point  xy
     // la( xy[] )             // points xy[] = ( xy.length, xy.ptr )
@@ -133,7 +113,14 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     void la()
     {
         la_borders();
+        la_v();
         SDL_RenderPresent( renderer );
+    }
+
+    void la_v()
+    {
+        foreach( o; this.v )
+            o.la( Renderer( renderer ) );
     }
 
 
@@ -159,6 +146,31 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
         // Update
         SDL_UpdateWindowSurface( window );    
     }
+
+    auto px_()
+    {
+        PX px;
+
+        SDL_GetWindowPosition( window, &px.x, &px.y );
+
+        return px; // M16,M16,M16,M16
+    }
+
+
+    auto _px()
+    {
+        PX px;
+
+        SDL_GetWindowSizeInPixels( window, &px.x, &px.y );
+
+        return px; // M32,M32 -> F16.16,F16.16
+    }
+
+    auto pxpx()
+    {
+        return PXPX( px_, _px ); // M16,M16,M16,M16
+    }
+
 
     private
     void _create_renderer()
