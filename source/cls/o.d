@@ -322,7 +322,7 @@ unittest
     auto chip = new Chip();
 
     // Test Draw
-    auto renderer = new Renderer();
+    auto renderer = Renderer();
     chip.la( renderer );
 
     chip.to!Chip_Hovered();

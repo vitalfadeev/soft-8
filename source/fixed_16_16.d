@@ -134,6 +134,28 @@ struct Fixed_16_16
         return T( this.a / b );
     }
 
+    int opCmp( Fixed_16_16 b )
+    {
+        // a < b 
+        if (h == b.h)
+        if (l < b.l)
+            return -1;
+
+        if (h < b.h)
+            return -1;
+
+        // a > b 
+        if (h == b.h)
+        if (l > b.l)
+            return 1;
+
+        if (h > b.h)
+            return 1;
+
+        // a = b
+        return 0;
+    }
+
 
     M16 to( M16 )()
     {
@@ -276,6 +298,28 @@ unittest
     //assert( b.l   ==  0 );
     //assert( c.h   == -1 );
     //assert( c.l   ==  0 );
+}
+
+
+unittest
+{
+    // =
+    auto a = Fixed_16_16( 1, 0 );
+    auto b = Fixed_16_16( 1, 0 );
+    assert( a.opCmp( b ) == 0 );
+    assert( a == b );
+
+    // <
+    a = Fixed_16_16( 1, 0 );
+    b = Fixed_16_16( 2, 0 );
+    assert( a.opCmp( b ) == -1 );
+    assert( a < b );
+
+    // >
+    a = Fixed_16_16( 2, 0 );
+    b = Fixed_16_16( 1, 0 );
+    assert( a.opCmp( b ) == 1 );
+    assert( a > b );
 }
 
 

@@ -136,7 +136,7 @@ class Art : O
 
     bool hit_test( OX ox )
     {
-    	return true;
+    	return oxox.has( ox );
     }
 }
 

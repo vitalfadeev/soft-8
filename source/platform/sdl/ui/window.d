@@ -39,10 +39,6 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
         {
             game.pool ~= DT_MOUSE_LEFT_PRESSED;    // action
             game.pool ~= D_LA( pxpx );             // action
-
-            // + new la
-            //import cls.o : sense_v;
-            //sense_v( this.v, d );
         }
     }
 

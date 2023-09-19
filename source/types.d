@@ -51,6 +51,8 @@ unittest
         S( 4 )
     );
     auto xy = cs.ToXY();
+
+    import std.stdio : writeln;
     writeln( xy );
 }
 
@@ -87,6 +89,8 @@ unittest
         Y( 2 )
     );
     auto cs = xy.ToCS();
+
+    import std.stdio : writeln;
     writeln( cs );
 }
 
@@ -171,8 +175,6 @@ struct Renderer
 
     void la( PX px, PX _px )
     {
-        import std.stdio : writeln;
-        writeln( "la: PX: ", px, ", ", _px );
         SDL_RenderDrawLine( renderer, px.x, px.y, _px.x, _px.y );
     }
 
@@ -731,6 +733,18 @@ struct OXOX
         }
 
         return d;
+    }
+
+
+    bool has( OX ox )
+    {
+        return 
+            (
+                (ox_.x >= ox.x) &&
+                (ox_.y >= ox.y) &&
+                (_ox.x < ox.x) &&
+                (_ox.y < ox.y)
+            );
     }
 }
 
