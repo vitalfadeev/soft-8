@@ -45,11 +45,12 @@ void main()
     auto la1 = window.ma!LA1();
     auto la2 = window.ma!LA2();
     auto lax = window.ma!LAX();
-    la2._ox = PX( 100, 0 );  // (int,int) -> Fixed_16_16
+    la2._ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
+    lax. ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX( 100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
-    lax._oxs ~= PX( 100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
-    lax._oxs ~= PX( 200, 100 ).to!OX;  // (int,int) -> Fixed_16_16
-    lax._oxs ~= PX( 200, 200 ).to!OX;  // (int,int) -> Fixed_16_16
+    lax._oxs ~= PX(-100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
+    lax._oxs ~= PX(-100,-100 ).to!OX;  // (int,int) -> Fixed_16_16
+    lax._oxs ~= PX( 100,-100 ).to!OX;  // (int,int) -> Fixed_16_16
 
     //
     game.sensors ~= window;
@@ -70,13 +71,11 @@ class LA1 : O
 
     OX ox;
 
-
     pragma( inline, true )
     void on_DT_MOUSEBUTTONDOWN( D d )
     {
     	//
     }
-
 
     void la( Renderer renderer )
     {
