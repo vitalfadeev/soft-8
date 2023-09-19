@@ -211,23 +211,6 @@ struct Ars
 }
 
 
-struct Loc
-{
-    CS cs;
-    alias cs this;
-
-    this( CS cs )
-    {
-        this.cs = cs;
-    }
-
-    this( M16 c, M16 s )
-    {
-        this.cs = CS( C(c), S(s) );
-    }
-}
-
-
 version(SDL)
 {
     import bindbc.sdl;

@@ -160,15 +160,15 @@ struct Op
     struct Lai
     {
         Opcode opcode = Opcode.LAI;
-        Loc loc;
-        L   l;
+        //Loc loc;
+        //L   l;
     }
 
     struct Ola
     {
         Opcode opcode = Opcode.OLA;
-        Loc c;
-        L   r;
+        //Loc c;
+        //L   r;
     }
 }
 
