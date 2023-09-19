@@ -152,7 +152,18 @@ struct L
 
 class Renderer
 {
-    //
+    SDL_Renderer* renderer;
+
+    void la()
+    {
+        SDL_RenderDrawPoint( renderer, 0, 0 );
+    }
+
+    void la( OX ox )
+    {
+        auto px = ox.to!PX;
+        SDL_RenderDrawPoint( renderer, px.x, px.y );
+    }
 }
 
 struct Ars
