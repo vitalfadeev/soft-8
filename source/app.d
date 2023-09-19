@@ -126,7 +126,7 @@ class Art : O
 
         if ( d.button.button == SDL_BUTTON_LEFT )  // sub sensor
         {
-        	if ( hit_test( PX( d.button.x, d.button.y ).to!OX ) )
+        	if ( hit_test( SX( d.button.x, d.button.y ).to!OX ) )
         	{
 				import std.stdio : writeln;
         		writeln("OK");

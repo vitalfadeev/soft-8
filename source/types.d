@@ -468,8 +468,14 @@ struct SX_(X,Y)
 
     auto to(T:OX)()
     {
-        return OX();
+        OX ox;
+        ox.x.h = cast(short)this.x;
+        ox.x.l = 0;
+        ox.y.h = cast(short)this.y;
+        ox.y.l = 0;
+        return ox;
     }
+
 
     auto to(T:MPTR)()
     {
