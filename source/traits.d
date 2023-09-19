@@ -18,7 +18,7 @@ template isDerivedFromInterface(T,A)
 // isSameInstaneSize!(Chip_Init,Chip_Hovered) == true
 template isSameInstaneSize(CLS,T)
 {
-    static if ( __traits( classInstanceSize, CLS ) != __traits( classInstanceSize, typeof(this) ) )
+    static if ( __traits( classInstanceSize, CLS ) != __traits( classInstanceSize, T ) )
         enum isSameInstaneSize = true;
     else
         enum isSameInstaneSize = false;

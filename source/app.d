@@ -4,9 +4,9 @@ import game;
 void main()
 {
     auto window = new Window();
-    auto box = window.ma!Box();
-    //box.pos  = OX( 0,0 );
-    //box.size = OX( 100,100 );
+    auto la1 = window.ma!LA1();
+    la1.ox = PX( 0, 0 );  // (int,int) -> Fixed_16_16
+    //la1.size = OX( 100,100 );
 
     //
     game.sensors ~= window;
@@ -21,7 +21,10 @@ void main()
 
 
 import cls.o;
-class Box : O
+class LA1 : O
 {
     mixin OMixin!();
+
+    OX ox;
 }
+

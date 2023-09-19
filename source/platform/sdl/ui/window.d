@@ -49,7 +49,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
         if ( d.button.button == SDL_BUTTON_LEFT )  // sub sensor
         {
             game.pool ~= DT_MOUSE_LEFT_PRESSED;    // action
-            game.pool ~= D_LA( rect );             // action
+            game.pool ~= D_LA( pxpx );             // action
         }
     }
 
@@ -70,7 +70,7 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     void la_borders()
     {
         la_cola( 0xFF_FF_FF_FF );
-        la_rect( 0, 0, size );
+        la_rect( 0, 0, _px );
     }
 
     void la_cola( uint rgba )
@@ -97,28 +97,28 @@ class WindowSensor : ISenseAble, IVAble!O, ILaAble
     }
 
 
-    auto pos()
+    auto px_()
     {
-        PX px_pos;
+        PX px;
 
-        SDL_GetWindowPosition( window, &px_pos.x, &px_pos.y );
+        SDL_GetWindowPosition( window, &px.x, &px.y );
 
-        return px_pos; // M16,M16,M16,M16
+        return px; // M16,M16,M16,M16
     }
 
 
-    auto size()
+    auto _px()
     {
-        PX px_size;
+        PX px;
 
-        SDL_GetWindowSizeInPixels( window, &px_size.x, &px_size.y );
+        SDL_GetWindowSizeInPixels( window, &px.x, &px.y );
 
-        return px_size; // M32,M32 -> F16.16,F16.16
+        return px; // M32,M32 -> F16.16,F16.16
     }
 
-    auto rect()
+    auto pxpx()
     {
-        return PXPX( pos, size ); // M16,M16,M16,M16
+        return PXPX( px_, _px ); // M16,M16,M16,M16
     }
 
 

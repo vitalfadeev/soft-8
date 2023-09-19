@@ -436,7 +436,7 @@ struct SX_(X,Y)
 //   world matrix
 struct OX_(X,Y)
 {
-    alias TXY = Largest!(X,Y);
+    alias TXY = Detect8bitAlignedType!(X,Y);
 
     union
     {
@@ -446,6 +446,14 @@ struct OX_(X,Y)
             Y y;
         }
         TXY xy;
+    }
+
+    void opAssign( PX px )
+    {
+        x.h = cast(ushort)px.x;
+        x.l = 0;
+        y.h = cast(ushort)px.y;
+        y.l = 0;
     }
 
     auto to(T:PX)()
