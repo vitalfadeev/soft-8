@@ -115,3 +115,30 @@ class LAX : O
     }
 }
 
+class Art : O
+{
+    mixin OMixin!();
+
+    // pos
+    // size
+
+    void on_DT_MOUSEBUTTONDOWN( D d )
+    {
+		import bindbc.sdl;
+
+        if ( d.button.button == SDL_BUTTON_LEFT )  // sub sensor
+        {
+        	if ( hit_test( PX( d.button.x, d.button.y ).to!OX ) )
+        	{
+				import std.stdio : writeln;
+        		writeln("OK");
+        	}
+        }
+    }
+
+    bool hit_test( OX ox )
+    {
+    	return true;
+    }
+}
+

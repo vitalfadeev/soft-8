@@ -112,24 +112,20 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
             o.la( Renderer( renderer ) );
     }
 
-
-    // pos, size, rect
-    auto pos(T=PX)()
-        if ( is( t == PX ) || is( T == OX ) )
+    // oxox, px_, _px, pxpx
+    auto oxox()
     {
-        return px_.to!T;
+        return OXOX( ox_, _ox ); // M16,M16,M16,M16
     }
 
-    auto size(T=PX)()
-        if ( is( t == PX ) || is( T == OX ) )
+    auto ox_()
     {
-        return _px.to!T;
+        return px_.to!OX; 
     }
 
-    auto rect(T=PXPX)()
-        if ( is( t == PXPX ) || is( T == OXOX ) )
+    auto _ox()
     {
-        return pxpx.to!T;
+        return _px.to!OX; 
     }
 
     auto px_()

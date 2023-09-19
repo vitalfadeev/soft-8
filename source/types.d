@@ -688,6 +688,53 @@ struct PXPX
 }
 
 
+struct OXOX
+{
+    union
+    {
+        struct
+        {
+            OX ox_;
+            OX _ox;
+        }
+        TOXOX oxox;
+    }    
+    alias TOXOX = Detect8bitAlignedType!(OX,OX);
+
+    // x,y to R1
+    // x,y to R1, R2
+    // x,y to e.user.data1
+    // x,y to e.user.data1, e.user.data2
+    auto to(T:MPTR)()
+    {
+        static assert( TOXOX.sizeof <= MPTR.sizeof, "Expect OXOX <= MPTR" );
+        return cast(MPTR)xy;
+    }
+
+    auto to(T:OXOX)()
+    {
+        return this;
+    }
+
+    auto to(T:D)()
+    {
+        D d;
+        alias TDATA1 = typeof( d.user.data1 );
+        alias TDATA2 = typeof( d.user.data2 );
+
+        if ( TOXOX.sizeof <= TDATA1.sizeof )
+            d.user.data1 = cast(TDATA1)oxox;
+        else
+        {
+            d.user.data1 = ox_.to!TDATA1;
+            d.user.data2 = _ox.to!TDATA2;
+        }
+
+        return d;
+    }
+}
+
+
 // O
 //   v o
 // IVAble

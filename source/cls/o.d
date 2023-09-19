@@ -146,7 +146,36 @@ void sense_v(T)( T o, D d )
 
 mixin template LaAble( T )
 {
-    void la( Renderer renderer ) {};
+    OX ox_;
+    OX _ox;
+
+    //
+    void la( Renderer renderer ) 
+    {
+        //
+    };
+
+    // oxox, px_, _px, pxpx
+    auto oxox()
+    {
+        return OXOX( ox_, _ox ); // M16,M16,M16,M16
+    }
+
+    auto px_()
+    {
+        return ox_.to!PX; 
+    }
+
+
+    auto _px()
+    {
+        return _ox.to!PX; 
+    }
+
+    auto pxpx()
+    {
+        return PXPX( px_, _px ); // M16,M16,M16,M16
+    }
 }
 
 mixin template VAble( T )
