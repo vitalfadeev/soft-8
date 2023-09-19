@@ -3,6 +3,7 @@ module types;
 //import std.conv;
 //import std.format;
 import std.stdio;
+import std.traits;
 import fixed_16_16;
 
 
@@ -188,7 +189,7 @@ else
 }
 enum: DT
 {
-    _,
+    //_,
     // SDL
     // ...
     //
@@ -385,96 +386,273 @@ struct PXRect
 // sx
 //   640 x 480                      m16 x m16
 
-version(SDL)
+// Big
+//   small
+//     loca
+//
+// 1 big = 3 small
+// 1 big = 3x3 small
+// 
+// 2 big = 3 small
+//   k = (2,3)
+//   k = K(2,3)
+//   k = (2,3).k
+//
+// loca
+//   i
+//   xy
+//   cs
+
+// Picture
+//   640x480
+//   PX
+
+// World > Picture
+// World = Picture
+// World < Picture
+//
+// World > Picture
+//   65536x65536 > 640x480
+//     desize World to 640x480  // dec size  // reduce  // desize
+//     crop   World to 640x480
+//     -> 65536x65536 is loxels (location elements). lx. is oxels (o elemets). ox
+//     -> 640x480 is wixels (window elements). wx. is pixel (picture element). px
+// World = Picture
+//   65536x65536 = 640x480
+//     ok
+// World < Picture
+//   65536x65536 < 640x480
+//     ok
+
+// ox
+// px
+
+// ox  // max     detalization
+// px  // picture detalization
+// sx  // sensor  detalization
+
+// sensor -> sx->ox 
+//   kasx 
+//     1 kasx = 100 ox
+//     1 касание = 100 элементов мира
+//
+// sensor.kasx
+//   sx -> ox
+//   .to!OX
+
+// sensor - touch - (x,y).sx
+//   sx -> ox
+//     .to!OX
+//       ox = ka * sx  // ka = 1..255
+//   (100x100).ox
+
+// sensor element location
+//   depends from sensor detalization
+// is:
+//   touch-screen matrix
+//   mouse move position
+//   mouse position
+struct SX_(X,Y)
 {
-    alias PX_X = int;
-    alias PX_Y = int;  // PX_TX
+    alias TXY = Largest!(X,Y);
+
+    union
+    {
+        struct
+        {
+            X x;
+            Y y;
+        }
+        TXY xy;
+    }
+
+    auto to(T:OX)()
+    {
+        return OX();
+    }
+
+    auto to(T:MPTR)()
+    {
+        static assert( TXY.sizeof <= MPTR.sizeof, "Expect TXY <= MPTR" );
+        return cast(MPTR)xy;
+    }
 }
-else
+
+
+// O element location
+//   depends from o detalization
+// is: 
+//   world matrix
+struct OX_(X,Y)
 {
-    alias PX_X = M16;
-    alias PX_Y = M16;  // PX_TX
-}
+    alias TXY = Largest!(X,Y);
 
-struct PX
-{
-    PX_X x; 
-    PX_Y y;
-
-    LX to(T:LX)()
+    union
     {
-        return LX( x, y );
+        struct
+        {
+            X x;
+            Y y;
+        }
+        TXY xy;
     }
 
-    SX to(T:SX)()
-    {
-        return SX();
-    }
-}
-
-struct LX
-{
-    // (x,y) or can be (c,s)
-    Fixed_16_16 x;
-    Fixed_16_16 y;
-
-    this( M16 x, M16 y )
-    {
-        this.x = x;
-        this.y = y;
-    }
-
-    this( PX_X x, PX_Y y )
-    {
-        import std.conv;
-        this.x.h = x.to!(typeof(Fixed_16_16.h));
-        this.y.h = y.to!(typeof(Fixed_16_16.h));
-    }
-
-    PX to(T:PX)()
-    {
-        return 
-            PX(
-                // px         lx
-                // ------ = k ------
-                // px.max     lx.max
-                //
-                // px = k * lx * px.max / lx.max
-                //
-                // sx = 3x3
-                //      touch 3x3
-                // lx = 65536x65536
-                //      map 16368 x 16368
-                // px = 640x480
-                //      window 640x480
-
-                this.x.to!(typeof(PX.x)),
-                this.y.to!(typeof(PX.y))
-            );
-    }
-
-    SX to(T:SX)()
-    {
-        return SX();
-    }
-}
-
-struct SX
-{
-    M16 x;
-    M16 y;
-
-    LX to(T:LX)()
-    {
-        return LX();
-    }
-
-    PX to(T:PX)()
+    auto to(T:PX)()
     {
         return PX();
     }
+
+    auto to(T:MPTR)()
+    {
+        static assert( TXY.sizeof <= MPTR.sizeof, "Expect TXY <= MPTR" );
+        return cast(MPTR)xy;
+    }
 }
 
 
-alias LXSize = LX;
-alias PXSize = PX;
+// picture element location
+//   depends from picture detalization
+// is: 
+//   display matrix
+//   picture im memory
+struct PX_(X,Y)
+{
+    enum X_MAX = 640;
+    enum Y_MAX = 480;
+    alias TXY = Detect8bitAlignedType!(X,Y);  // M8, M16, M32, M64
+
+    union
+    {
+        struct
+        {
+            X x;
+            Y y;
+        }
+        TXY xy;
+    }
+
+    auto to(T:OX)()
+    {
+        return OX();
+    }
+
+    auto to(T:IX)()
+    {
+        return IX( ( y * X_MAX ) + x );
+    }
+
+    // x,y to R1
+    // x,y to R1, R2
+    // x,y to e.user.data1
+    // x,y to e.user.data1, e.user.data2
+    auto to(T:MPTR)()
+    {
+        static assert( TXY.sizeof <= MPTR.sizeof, "Expect TXY <= MPTR" );
+        return cast(MPTR)xy;
+    }
+
+    auto to(T:D)()
+    {
+        SDL_UserEvent d;
+
+        if ( TXY.sizeof <= MPTR.sizeof )
+            d.user.data1 = cast(MPTR)xy;
+        else
+        {
+            d.user.data1 = cast(MPTR)x;
+            d.user.data2 = cast(MPTR)y;
+        }
+
+        return d;
+    }
+}
+
+
+// index of element
+//   10.ix
+//   (3,3).px = (9).ix = 9
+// is:
+//   unique index
+//   UUID
+//   size_t
+//   int
+//   ubyte
+struct IX_(T)
+{
+    T i;
+
+    auto to(T:PX)()
+    {
+        auto y = i / PX.X_MAX;  // integer part
+        auto x = i % PX.X_MAX;  // frac part
+
+        return PX( x, y );
+    }
+}
+
+
+version(SDL)
+{
+    alias SX = SX_!( typeof( SDL_MouseMotionEvent.x ), typeof( SDL_MouseMotionEvent.x ) );
+    alias OX = OX_!( Fixed_16_16, Fixed_16_16 );
+    alias PX = PX_!( typeof( SDL_Point.x ), typeof( SDL_Point.y ) );
+    alias IX = IX_!size_t;
+}
+else
+{
+    alias SX = SX_!( M16, M16 );
+    alias OX = OX_!( Fixed_16_16, Fixed_16_16 );
+    alias PX = PX_!( M16, M16 );
+    alias IX = IX_!size_t;
+}
+
+
+struct PXPX
+{
+    PX px_;
+    PX _px;
+    alias TPXPX = Detect8bitAlignedType!(PX,PX);
+
+    // x,y to R1
+    // x,y to R1, R2
+    // x,y to e.user.data1
+    // x,y to e.user.data1, e.user.data2
+    auto to(T:MPTR)()
+    {
+        static assert( (TLARGEST.sizeof + TLARGEST.sizeof) <= MPTR.sizeof, "Expect TXY <= MPTR" );
+        return cast(MPTR)xy;
+    }
+
+    auto to(T:D)()
+    {
+        SDL_UserEvent d;
+
+        if ( TXY.sizeof <= MPTR.sizeof )
+            d.user.data1 = cast(MPTR)xy;
+        else
+        {
+            d.user.data1 = cast(MPTR)x;
+            d.user.data2 = cast(MPTR)y;
+        }
+
+        return d;
+    }
+}
+
+void send_la( PX xy )
+{
+    auto d = xy.to!D;  // rect.xy_
+    d.type = D_LA;
+    //e.user.data1 = xy.to!D();
+    //e.user.data2 = null;
+    game.pool ~= d;
+}
+
+void send_la( PXPX xyxy )
+{
+    auto d = xyxy.to!D;  // rect.xy_
+    d.type = D_LA;
+    //e.user.data1 = xyxy.xy_.to!D();
+    //e.user.data2 = xyxy._xy.to!D();
+    game.pool ~= d;
+}
