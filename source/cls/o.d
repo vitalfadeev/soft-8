@@ -69,15 +69,15 @@ mixin template SenseAble( T )
         pragma( msg, "osens: ", __FUNCTION__ );
 
         // sense
-        sense_!T( this, d );
+        sense_( this, d );
 
         // try go to new state
-        static if( isDerivedFromInterface!(T,IStateAble) )
-        try_to_!T( this, d );
+        //static if( isDerivedFromInterface!(T,IStateAble) )
+        try_to_( this, d );
 
         // recursive v sense
-        static if( isDerivedFromInterface!(T,IVAble) )
-        sense_v!T( this, d );
+        //static if( isDerivedFromInterface!(T,IVAble) )
+        sense_v( this.v, d );
     };
 }
 
@@ -128,6 +128,7 @@ void sense_(T)( T o, D d )
 void try_to_(T)( T o, D d )
 {
     import std.string;
+    import std.traits;
 
     static foreach( m; __traits( allMembers, T ) )
         static if ( isCallable!(__traits(getMember, T, m)) )
@@ -137,10 +138,10 @@ void try_to_(T)( T o, D d )
 
 
 //
-void sense_v(T)( T o, D d )
+void sense_v( V v, D d )
 {
-    foreach( o; o.v )
-        o.sense( d );
+    foreach( _o; v )
+        _o.sense( d );
 }
 
 
@@ -278,15 +279,15 @@ mixin template OMixin()
         pragma( msg, "osens: ", __FUNCTION__ );
 
         // sense
-        sense_!T( this, d );
+        sense_( this, d );
 
         // try go to new state
-        static if( isDerivedFromInterface!(T,IStateAble) )
-        try_to_!T( this, d );
+        //static if( isDerivedFromInterface!(T,IStateAble) )
+        try_to_( this, d );
 
         // recursive v sense
-        static if( isDerivedFromInterface!(T,IVAble) )
-        sense_v!T( this, d );
+        //static if( isDerivedFromInterface!(T,IVAble) )
+        sense_v( this.v, d );
     };
 }
 

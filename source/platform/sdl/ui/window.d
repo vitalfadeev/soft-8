@@ -41,6 +41,8 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
             game.pool ~= D_LA( pxpx );             // action
 
             // + new la
+            //import cls.o : sense_v;
+            //sense_v( this.v, d );
         }
     }
 
@@ -48,9 +50,6 @@ class WindowSensor : ISenseAble, IVAble, ILaAble
     void on_DT_LA( D d )
     {
         auto pxpx = d.to!PXPX;
-        import std.stdio;
-        writeln( "  ", pxpx );
-
         la();
     }
 

@@ -45,6 +45,7 @@ void main()
     auto la1 = world.ma!LA1();
     auto la2 = world.ma!LA2();
     auto lax = world.ma!LAX();
+    auto art = world.ma!Art();
     la2._ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
     lax. ox   = PX( 100, 0 );  // (int,int) -> Fixed_16_16
     lax._oxs ~= PX( 100, 100 ).to!OX;  // (int,int) -> Fixed_16_16
@@ -118,9 +119,6 @@ class LAX : O
 class Art : O
 {
     mixin OMixin!();
-
-    // pos
-    // size
 
     void on_DT_MOUSEBUTTONDOWN( D d )
     {
