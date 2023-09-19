@@ -497,9 +497,9 @@ struct OX_(X,Y)
 
     void opAssign( PX px )
     {
-        x.h = cast(ushort)px.x;
+        x.h = cast(short)px.x;
         x.l = 0;
-        y.h = cast(ushort)px.y;
+        y.h = cast(short)px.y;
         y.l = 0;
     }
 
@@ -554,9 +554,9 @@ struct PX_(X,Y)
     auto to(T:OX)()
     {
         OX ox;
-        ox.x.h = cast(ushort)this.x;
+        ox.x.h = cast(short)this.x;
         ox.x.l = 0;
-        ox.y.h = cast(ushort)this.y;
+        ox.y.h = cast(short)this.y;
         ox.y.l = 0;
         return ox;
     }

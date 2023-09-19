@@ -18,8 +18,8 @@ struct Fixed_16_16
             //   meaning that the value 
             //   0x0A0B0C0D is stored in memory as: 
             //   0D 0C 0B 0A.
-            M16 l;
-            M16 h;
+            ushort l;
+            short  h;
         }
     }
 
