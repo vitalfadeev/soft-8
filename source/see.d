@@ -135,9 +135,9 @@ class ISee : I
     }
 
     // async
-    void a_see( AWana awana, SeeAble b )
+    void a_see( Wana wana, SeeAble b )
     {
-        auto wa = awana.ma!SeeWa();
+        auto wa = wana.ma!SeeWa();
     }
 
     override
@@ -214,30 +214,14 @@ interface SeeAble
 
 unittest
 {
-    Wana wana;
-
+    // ma
     auto a = new A();
-
     auto i = a.ma!I();
 }
 
 unittest
 {
-    Wana wana;
-
-    auto a = new A();
-
-    auto i = a.ma!ISee();
-    auto b = a.ma!BSeeAble();
-
-    i.see( b );
-}
-
-unittest
-{
     // sync
-    Wana wana;
-
     auto a = new A();
 
     auto i = a.ma!ISee();
@@ -249,14 +233,14 @@ unittest
 unittest
 {
     // async
-    AWana awana;
+    Wana wana;
 
     auto a = new A();
 
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.a_see( awana, b ); // via awana
+    i.a_see( wana, b ); // via wana
 }
 
 
@@ -330,8 +314,7 @@ struct V_(T)
 
 
 // wa <- wana <- wa
-alias Wana  = Wana_!Wa;
-alias AWana = Wana_!AWaNa;
+alias Wana = Wana_!AWaNa;
 // FIFO
 struct Wana_(T)
     if ( is( T == struct ))
@@ -492,12 +475,11 @@ bool is_na( AWaNa )
 struct Go
 {
     static
-    //Wana  wana;
-    AWana awana;
+    Wana wana;
 
     void go( V v )
     {
-        foreach( wn; awana )
+        foreach( wn; wana )
             foreach( a; v )
                 if ( a.able )
                 {
