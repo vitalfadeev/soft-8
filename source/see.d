@@ -5,13 +5,14 @@ module see;
 // i   o
 
 //          o
-//         / \
+//         / \        ma
 //        i   o
 //       /     \
-// sensor   ->  sense_able
-// sensor  <-   sense_able
+//    see   ->  see_able
+//    see  <-   see_able
 
-//    wa         ma
+//    wa    ->   
+//         <-    ma
 
 // i wa o
 //   wa.o -> wana
@@ -144,7 +145,7 @@ struct V_(T)
 
 
 // wa <- wana <- wa
-alias Wana = Wana_!O;
+alias Wana = Wana_!Wa;
 // FIFO
 struct Wana_(T)
 {
