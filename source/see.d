@@ -35,7 +35,7 @@ module see;
 //   see
 //     wa -> wana               // wa: wa_see,i
 //
-// game                         // : wana_able
+// Go                           // : wana_able
 //   wana
 //     wa
 //       .wa_see
@@ -80,7 +80,15 @@ class Able
     }
 }
 
-class A : Able
+class WaAble : Able
+{
+    void wa( Wa wa )
+    {
+        //
+    }
+}
+
+class A : WaAble
 {
     V v;
 
@@ -117,6 +125,21 @@ class ISee : I
 
 class BSeeAble: A, SeeAble
 {
+    override
+    void wa( Wa wa )
+    {
+        switch ( wa.t )
+        {
+            case WAT._: { WAT_( wa ); break; }
+            default: break;
+        }
+    }
+
+    void WAT_( Wa wa )
+    {
+        //
+    }
+
     void see_able( ISee i )
     {
         //
@@ -280,9 +303,14 @@ struct Wana_(T)
 }
 
 
+enum WAT
+{
+    _,
+}
+
 struct Wa
 {
-    //
+    WAT t;
 }
 
 struct SeeWa
@@ -301,3 +329,19 @@ struct SeeNa
     Na _super;
     alias _super this;
 }
+
+
+struct Go
+{
+    static
+    Wana wana;
+
+    void go( V v )
+    {
+        foreach( wa; wana )
+            foreach( a; v )
+                if ( a.able )
+                    a.wa( wa );
+    }
+}
+
