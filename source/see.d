@@ -260,23 +260,22 @@ unittest
     //Wana wana;
 
     auto a = ma!A();
-    import std.stdio : writeln;
-    writeln( a.v.f );
 
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
     i.a_see( wana, b ); // async call via wana
+    
     import std.stdio : writeln;
     writeln( "A_SEE: " );
-    writeln( "A_SEE front: ", wana.f );
-    writeln( a.v.f );
+
+    auto saved_v = a.v.save;
 
     // go
     //for (auto wn=wana.front; !wana.empty; wana.popFront(), wn=wana.front )
     foreach( wn; wana )
-        for (auto _a=a.v.front; !a.v.empty; a.v.popFront(), _a=a.v.front )
-        //foreach( _a; a.v )
+        //for (auto _a=saved_v.front; !saved_v.empty; saved_v.popFront(), _a=saved_v.front )
+        foreach( _a; saved_v )
             if ( _a.able )
             {
                 writeln( "  able: ", _a );
@@ -306,45 +305,32 @@ alias V = V_!A;
 struct V_(T)
     if ( is( T == class ) && __traits(hasMember,T,"_next") )
 {
-    T f;
-    T b;
-
-
-    T front()
-    {
-        return f;
-    }
-
-    T back()
-    {
-        return b;
-    }
+    T front;
+    T back;
 
     bool empty()
     {
-        return (f is null);
+        return (front is null);
     }
 
     void popFront()
     {
-        assert( f !is null );
+        assert( front !is null );
 
-        auto for_free = f;
+        auto for_free = front;
 
-        if ( f._next is null )
+        if ( front._next is null )
         {
-            f = null;
-            b = null;
+            front = null;
+            back = null;
         }
         else
-            f = f._next;
-
-        //for_free.destroy();
+            front = front._next;
     }
 
     auto save()
     {
-        return typeof(this)(f,b);  // copy
+        return typeof(this)(front,back);  // copy
     }
 
     auto ma(SUBT : T,ARGS...)( ARGS args )
@@ -355,13 +341,13 @@ struct V_(T)
         // put at back
         if ( empty )
         {
-            f = ov;
-            b = ov;
+            front = ov;
+            back  = ov;
         }
         else
         {
-            b._next = ov;
-            b       = ov;
+            back._next = ov;
+            back       = ov;
         }
 
         return ov;
