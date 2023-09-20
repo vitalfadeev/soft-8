@@ -155,19 +155,19 @@ class ISee : I
     {
         switch ( na.t )
         {
-            case NAT._   : { NAT_( na );        break; }
-            case NAT.SEE : { NAT_SEE( na.see ); break; }
+            case NA._   : { NA_( na );        break; }
+            case NA.SEE : { NA_SEE( na.see ); break; }
             default: break;
         }
     }
 
-    void NAT_( Na na )
+    void NA_( Na na )
     {
         import std.stdio : writeln;
         writeln( "_: from: ", na.b );
     }
 
-    void NAT_SEE( SeeNa na )
+    void NA_SEE( SeeNa na )
     {
         import std.stdio : writeln;
         writeln( "SEE: from: ", na.b );
@@ -187,7 +187,7 @@ class BSeeAble: A, SeeAble
     void see_able( ISee i )
     {
         import std.stdio : writeln;
-        writeln( "    SEE: for: ", i );
+        writeln( "      sync SEE: for: ", i );
     }
 
     // async
@@ -196,22 +196,27 @@ class BSeeAble: A, SeeAble
     {
         switch ( wa.t )
         {
-            case WAT._   : { WAT_( wa );        break; }
-            case WAT.SEE : { WAT_SEE( wa.see ); break; }
+            case WA._   : { WA_( wa );        break; }
+            case WA.SEE : { WA_SEE( wa.see ); break; }
             default: break;
         }
     }
 
     // async -> sync()
-    void WAT_( Wa wa )
+    void WA_( Wa wa )
     {
         import std.stdio : writeln;
-        writeln( "_: for: ", wa.i );
+        writeln( "    _: for: ", wa.i );
     }
 
-    void WAT_SEE( SeeWa wa )
+    void WA_SEE( SeeWa wa )
     {
+        import std.stdio : writeln;
+        writeln( "    SEE: for: ", wa.i );
         see_able( wa.i );
+
+        // async return
+        // wana <- na NA_SEE,i,this
     }
 
 
@@ -407,7 +412,7 @@ struct Wana_(T)
 }
 
 
-enum WAT
+enum WA
 {
     _,
     SEE,
@@ -415,8 +420,8 @@ enum WAT
 
 struct _Wa
 {
-    WAT t;
-    I   i;
+    WA t;
+    I  i;
 }
 
 struct Wa
@@ -425,8 +430,8 @@ struct Wa
     {
         struct
         {
-            WAT t = WAT._;
-            I   i;
+            WA t = WA._;
+            I  i;
         }
         _Wa   _;
         SeeWa see;
@@ -435,13 +440,13 @@ struct Wa
 
 struct SeeWa
 {
-    WAT  t = WAT.SEE;
+    WA   t = WA.SEE;
     ISee i;
 }
 
 
 //
-enum NAT
+enum NA
 {
     _,
     SEE,
@@ -453,8 +458,8 @@ struct Na
     {
         struct
         {
-            NAT t = NAT._;
-            B   b;
+            NA t = NA._;
+            B  b;
         };
         SeeNa see;
     }
@@ -462,8 +467,8 @@ struct Na
 
 struct SeeNa
 {
-    NAT t = NAT.SEE;
-    B   b;
+    NA t = NA.SEE;
+    B  b;
 }
 
 //
