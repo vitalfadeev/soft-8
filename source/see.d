@@ -222,11 +222,12 @@ class BSeeAble: A, SeeAble
         // async return
         // wana <- na NA_SEE,i,this
         auto na = SeeNa( NA.SEE, wa.i, this );
+        //writeln( "     sync bk: ", na.t, ": for: ", wa.i );
+        //wa.i.na( cast(Na)na );  // direct sync call
+
         writeln( "    async bk: ", na.t, ": for: ", wa.i );
-        wa.i.na( cast(Na)na );  // direct sync call
+        Send!SeeNa( NA.SEE, wa.i, this );
     }
-
-
 }
 
 interface SeeAble
@@ -283,6 +284,15 @@ unittest
                     _a.na( wn.na );
             }
     writeln( "A_SEE: ." );
+}
+
+static
+Wana wana;
+
+// Send!SeeNa( NA.SEE, wa.i, this );  // async call
+void Send(T,ARGS...)( ARGS args )
+{
+    wana.ma!T( args );  // async call
 }
 
 
@@ -400,7 +410,7 @@ struct Wana_(T)
             _ET* _next;
         }
 
-        auto ov = new __ET( args );
+        auto ov = new __ET( SUBT(args) );
 
         // put at back
         if ( empty )
