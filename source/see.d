@@ -273,8 +273,10 @@ unittest
     writeln( a.v.f );
 
     // go
+    //for (auto wn=wana.front; !wana.empty; wana.popFront(), wn=wana.front )
     foreach( wn; wana )
-        foreach( _a; a.v )
+        for (auto _a=a.v.front; !a.v.empty; a.v.popFront(), _a=a.v.front )
+        //foreach( _a; a.v )
             if ( _a.able )
             {
                 writeln( "  able: ", _a );
@@ -310,12 +312,12 @@ struct V_(T)
 
     T front()
     {
-        return cast(T)f;
+        return f;
     }
 
     T back()
     {
-        return cast(T)b;
+        return b;
     }
 
     bool empty()
@@ -326,9 +328,6 @@ struct V_(T)
     void popFront()
     {
         assert( f !is null );
-
-        import std.stdio : writeln;
-        writeln( __FUNCTION__ );
 
         auto for_free = f;
 
@@ -365,7 +364,7 @@ struct V_(T)
             b       = ov;
         }
 
-        return cast(SUBT)ov;
+        return ov;
     }
 }
 
@@ -381,8 +380,6 @@ struct Wana_(T)
 
     T* front()
     {
-        import std.stdio : writeln;
-        writeln( __FUNCTION__ );
         if ( f is null )
             return null;
         else
@@ -406,9 +403,6 @@ struct Wana_(T)
     {
         assert( f !is null );
 
-        import std.stdio : writeln;
-        writeln( __FUNCTION__ );
-
         auto for_free = f;
 
         if ( f._next is null )
@@ -420,8 +414,6 @@ struct Wana_(T)
             f = f._next;
 
 
-        import std.stdio : writeln;
-        writeln( __FUNCTION__ );
         //for_free.destroy();
     }
 
