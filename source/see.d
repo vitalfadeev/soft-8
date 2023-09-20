@@ -14,15 +14,15 @@ module see;
 //    wa         ma
 
 // i wa o
-//   wa.o -> pool
+//   wa.o -> wana
 //
-// pool -> wa
+// wana -> wa
 //   .o
 //     ma o
-//     done -> pool  // (o)
+//     na -> wana  // (o)
 //
-// pool -> done
-//   .done           // (o)
+// wana -> na
+//   .na           // (o)
 
 class O
 {
@@ -44,9 +44,36 @@ class I : O
     }
 }
 
+
+class ICanSee: I, ISee
+{
+    void see( ISeeAble o )
+    {
+        //
+    }
+}
+
+class OSeeAble: O, ISeeAble
+{
+    void see_able( ISee o )
+    {
+        //
+    }
+}
+
+interface ISee
+{
+    void see( ISeeAble o );
+}
+
+interface ISeeAble
+{
+    void see_able( ISee o );
+}
+
 unittest
 {
-    Pool pool;
+    Wana wana;
     auto o = new O();
     o.ma!I();
 }
@@ -116,11 +143,10 @@ struct V_(T)
 }
 
 
-// <- wa
-// -> wa
-alias Pool = Pool_!O;
+// wa <- wana <- wa
+alias Wana = Wana_!O;
 // FIFO
-struct Pool_(T)
+struct Wana_(T)
 {
     TV* f;
     TV* b;
