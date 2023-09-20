@@ -264,8 +264,6 @@ unittest
 alias V = V_!A;
 // SList
 struct V_(T)
-//struct V_(T : class)
-//struct V_( class T )
     if ( is( T == class ) )
 {
     _EVT f;
@@ -321,7 +319,10 @@ struct V_(T)
             b = cast( _EVT )ov;
         }
         else
-            b = cast( _EVT )ov;
+        {
+            b._next = cast( _EVT )ov;
+            b       = cast( _EVT )ov;
+        }
 
         return ov;
     }
@@ -333,19 +334,19 @@ alias Wana  = Wana_!Wa;
 alias AWana = Wana_!AWaNa;
 // FIFO
 struct Wana_(T)
+    if ( is( T == struct ))
 {
-    TV* f;
-    TV* b;
-    alias TV = TV_!T;
+    _ET* f;
+    _ET* b;
 
     T front()
     {
-        return cast(T)f.o;
+        return f._super;
     }
 
     T back()
     {
-        return cast(T)b.o;
+        return b._super;
     }
 
     bool empty()
@@ -359,9 +360,9 @@ struct Wana_(T)
 
         auto _f = f;
 
-        f = f.next;
+        f = f._next;
 
-        _f.destroy;
+        _f.destroy();
     }
 
     auto save()
@@ -373,37 +374,36 @@ struct Wana_(T)
     //{
     //    //
     //}
-
-    struct TV_(T)
+    struct _ET
     {
-        T   o;
-        TV* next;
-
-        this( TV* next )
-        {
-            this.next = next;
-        }
-
-        auto opCast( T )()
-        {
-            return o;
-        }
+        T    _super;
+        _ET* _next;
     }
 
-    auto ma(T,ARGS...)( ARGS args )
+    auto ma(SUBT,ARGS...)( ARGS args )
+        // if ( SUBT inherited from T )
     {
-        auto ov = new TV( b );
+        struct __ET
+        {
+            SUBT _super;
+            _ET* _next;
+        }
+
+        auto ov = new __ET( args );
 
         // put at back
         if ( empty )
         {
-            f = ov;
-            b = ov;
+            f = cast(_ET*)ov;
+            b = cast(_ET*)ov;
         }
         else
-            b = ov;
+        {
+            b._next = cast(_ET*)ov;
+            b       = cast(_ET*)ov;
+        }
 
-        return ov.o;
+        return &ov._super;
     }
 }
 
