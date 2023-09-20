@@ -2,6 +2,7 @@ module see;
 
 
 
+
 //   o
 //  / \
 // i   o
@@ -272,26 +273,17 @@ unittest
     writeln( a.v.f );
 
     // go
-    //foreach( ref wn; wana )
-    writeln( "wana.f: ", wana.f );
-    writeln( "wana.b: ", wana.f );
-
-    wana.popFront();
-    writeln( "wana.f: ", wana.f );
-    writeln( "wana.b: ", wana.f );
-
-    //for ( auto wn = wana.front; false; wana.popFront() )
-        //writeln( wn );
-        //foreach( ref _a; a.v )
-        //    if ( _a.able )
-        //    {
-        //        writeln( "  able: ", _a );
-        //        if ( wn.is_wa )
-        //            _a.wa( wn.wa );
-        //        else
-        //        if ( wn.is_na )
-        //            _a.na( wn.na );
-        //    }
+    foreach( wn; wana )
+        foreach( _a; a.v )
+            if ( _a.able )
+            {
+                writeln( "  able: ", _a );
+                if ( wn.is_wa )
+                    _a.wa( wn.wa );
+                else
+                if ( wn.is_na )
+                    _a.na( wn.na );
+            }
     writeln( "A_SEE: ." );
 }
 
@@ -334,13 +326,27 @@ struct V_(T)
     void popFront()
     {
         assert( f !is null );
-        f = f._next;
+
+        import std.stdio : writeln;
+        writeln( __FUNCTION__ );
+
+        auto for_free = f;
+
+        if ( f._next is null )
+        {
+            f = null;
+            b = null;
+        }
+        else
+            f = f._next;
+
+        //for_free.destroy();
     }
 
-    //auto save()
-    //{
-    //    return this;
-    //}
+    auto save()
+    {
+        return typeof(this)(f,b);  // copy
+    }
 
     auto ma(SUBT : T,ARGS...)( ARGS args )
         // if ( SUBT is subtype of T )
@@ -373,14 +379,22 @@ struct Wana_(T)
     _E* f;
     _E* b;
 
-    T front()
+    T* front()
     {
-        return f._super;
+        import std.stdio : writeln;
+        writeln( __FUNCTION__ );
+        if ( f is null )
+            return null;
+        else
+            return &f._super;
     }
 
-    T back()
+    T* back()
     {
-        return b._super;
+        if ( f is null )
+            return null;
+        else
+            return &b._super;
     }
 
     bool empty()
@@ -392,23 +406,28 @@ struct Wana_(T)
     {
         assert( f !is null );
 
+        import std.stdio : writeln;
+        writeln( __FUNCTION__ );
+
         auto for_free = f;
 
         if ( f._next is null )
         {
-            f = f._next;
+            f = null;
             b = null;
         }
         else
             f = f._next;
-            
 
-        for_free.destroy();
+
+        import std.stdio : writeln;
+        writeln( __FUNCTION__ );
+        //for_free.destroy();
     }
 
     auto save()
     {
-        return &this;
+        return this;  // non-copy
     }
 
     struct _E
@@ -516,12 +535,12 @@ struct AWaNa
     }
 }
 
-bool is_wa( AWaNa )
+bool is_wa( AWaNa* )
 {
     return true;
 }
 
-bool is_na( AWaNa )
+bool is_na( AWaNa* )
 {
     return true;
 }
