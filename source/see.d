@@ -153,6 +153,8 @@ class ISee : I
     override
     void na( Na na )
     {
+        import std.stdio : writeln;
+        writeln( "    async na: ", na.t, ": for: ", na.i, ": from: ", na.b );
         switch ( na.t )
         {
             case NA._   : { NA_( na );        break; }
@@ -164,13 +166,13 @@ class ISee : I
     void NA_( Na na )
     {
         import std.stdio : writeln;
-        writeln( "_: from: ", na.b );
+        writeln( "  _: from: ", na.b );
     }
 
     void NA_SEE( SeeNa na )
     {
         import std.stdio : writeln;
-        writeln( "SEE: from: ", na.b );
+        writeln( "  SEE: from: ", na.b );
     }
 }
 
@@ -219,6 +221,9 @@ class BSeeAble: A, SeeAble
 
         // async return
         // wana <- na NA_SEE,i,this
+        auto na = SeeNa( NA.SEE, wa.i, this );
+        writeln( "    async bk: ", na.t, ": for: ", wa.i );
+        wa.i.na( cast(Na)na );  // direct sync call
     }
 
 
@@ -461,6 +466,7 @@ struct Na
         struct
         {
             NA t = NA._;
+            I  i;
             B  b;
         };
         SeeNa see;
@@ -470,6 +476,7 @@ struct Na
 struct SeeNa
 {
     NA t = NA.SEE;
+    I  i;
     B  b;
 }
 
