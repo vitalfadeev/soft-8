@@ -22,10 +22,65 @@ module see;
 //     ma o
 //     na -> wana  // (o)
 //
-// wana -> na
+// wana
 //   .na           // (o)
+//
 
-class A
+// I                            // : able
+//   ( able )?
+// B                            // : able
+//   ( able )?
+
+// I
+//   see
+//     wa -> wana               // wa: wa_see,i
+//
+// game                         // : wana_able
+//   wana
+//     wa
+//       .wa_see
+//         each b
+//           .see( wa_see )
+//
+// B                            // : wa_able, see_wa_able
+//   ( wa )?
+//     wa_see
+//       .wa_see
+//         ma SEE()
+//         wana <- na           // na: wa_see,b,SEE
+//
+// I                            // : na_able, see_na_able
+//   ( na )?
+//     na <- wana
+//     na_see
+//   na_see
+//     wa_see,b,SEE
+
+// Able
+// Able
+//   able
+//
+// A                            // : always able
+//   able
+//     true
+//
+// I                            // : Able
+//   able
+//     if () then true else false
+//
+// B                            // : Able
+//   able
+//     if () then true else false
+
+class Able
+{
+    bool able()
+    {
+        return true;
+    }
+}
+
+class A : Able
 {
     V v;
 
@@ -51,6 +106,13 @@ class ISee : I
     {
         //
     }
+
+    override 
+    bool able()
+    {
+        return 
+            (1) ? true : false;
+    }
 }
 
 class BSeeAble: A, SeeAble
@@ -58,6 +120,13 @@ class BSeeAble: A, SeeAble
     void see_able( ISee i )
     {
         //
+    }
+
+    override 
+    bool able()
+    {
+        return 
+            (1) ? true : false;
     }
 }
 
