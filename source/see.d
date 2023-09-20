@@ -98,6 +98,8 @@ class A : WaAble
     }
 }
 
+alias B = A;
+
 
 class I : A
 {
@@ -110,43 +112,46 @@ class I : A
 
 class ISee : I
 {
-    void see( SeeAble b )
-    {
-        //
-    }
-
     override 
     bool able()
     {
         return 
             (1) ? true : false;
     }
-}
 
-class BSeeAble: A, SeeAble
-{
-    // async
-    override
-    void wa( Wa wa )
-    {
-        switch ( wa.t )
-        {
-            case WAT._   : { WAT_( wa );    break; }
-            case WAT.SEE : { WAT_SEE( wa ); break; }
-            default: break;
-        }
-    }
-
-    void WAT_( Wa wa )
+    // sync
+    void see( SeeAble b )
     {
         //
     }
 
-    void WAT_SEE( Wa wa )
+    // async
+    void na( Na na )
     {
-        see_able( wa.see.i );
+        switch ( na.t )
+        {
+            case NAT._   : { break; }
+            case NAT.SEE : { NAT_SEE( na.see ); break; }
+            default: break;
+        }
     }
 
+    void NAT_SEE( SeeNa na )
+    {
+        //
+    }
+
+
+}
+
+class BSeeAble: A, SeeAble
+{
+    override 
+    bool able()
+    {
+        return 
+            (1) ? true : false;
+    }
 
     // sync
     void see_able( ISee i )
@@ -154,12 +159,30 @@ class BSeeAble: A, SeeAble
         //
     }
 
-    override 
-    bool able()
+    // async
+    override
+    void wa( Wa wa )
     {
-        return 
-            (1) ? true : false;
+        switch ( wa.t )
+        {
+            case WAT._   : { WAT_( wa );        break; }
+            case WAT.SEE : { WAT_SEE( wa.see ); break; }
+            default: break;
+        }
     }
+
+    // async -> sync()
+    void WAT_( Wa wa )
+    {
+        //
+    }
+
+    void WAT_SEE( SeeWa wa )
+    {
+        see_able( wa.i );
+    }
+
+
 }
 
 interface SeeAble
@@ -344,15 +367,30 @@ struct SeeWa
     ISee i;
 }
 
+
+enum NAT
+{
+    _,
+    SEE,
+}
+
 struct Na
 {
-    //
+    union
+    {
+        struct
+        {
+            NAT t;
+            B   b;
+        };
+        SeeNa see;
+    }
 }
 
 struct SeeNa
 {
-    Na _super;
-    alias _super this;
+    NAT t;
+    B   b;
 }
 
 
