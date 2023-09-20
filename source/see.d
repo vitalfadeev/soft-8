@@ -450,8 +450,8 @@ struct Wana_(T)
 
 
 enum WA
-{
-    _,
+{        // odd bit = 1 is NA
+    _,   
     SEE,
 }
 
