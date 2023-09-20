@@ -1,6 +1,7 @@
 module see;
 
 
+
 //   o
 //  / \
 // i   o
@@ -97,15 +98,23 @@ class WaNaAble : WaAble
     }
 }
 
+auto ma(T, ARGS...)( ARGS args )
+{
+    return new T( args );
+}
+
+
 class A : WaNaAble
 {
     V v;
+    A _next;
 
     auto ma(T,ARGS...)( ARGS args )
     {
         return v.ma!T( args );
     }
 }
+
 
 alias B = A;
 
@@ -135,7 +144,7 @@ class ISee : I
     }
 
     // async
-    void a_see( Wana wana, SeeAble b )
+    void a_see( ref Wana wana, SeeAble b )
     {
         auto wa = wana.ma!SeeWa();
     }
@@ -215,14 +224,14 @@ interface SeeAble
 unittest
 {
     // ma
-    auto a = new A();
+    auto a = ma!A();
     auto i = a.ma!I();
 }
 
 unittest
 {
     // sync
-    auto a = new A();
+    auto a = ma!A();
 
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
@@ -235,35 +244,44 @@ unittest
     // async
     Wana wana;
 
-    auto a = new A();
+    auto a = ma!A();
+    import std.stdio : writeln;
+    writeln( a.v.f );
 
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
     i.a_see( wana, b ); // via wana
+    import std.stdio : writeln;
+    writeln( "A_SEE: " );
+    writeln( "A_SEE front: ", wana.f );
+    writeln( a.v.f );
 
     // go
-    foreach( wn; wana )
-        foreach( _a; a.v )
+    foreach( ref wn; wana )
+        foreach( ref _a; a.v )
             if ( _a.able )
             {
+                writeln( "able" );
                 if ( wn.is_wa )
                     _a.wa( wn.wa );
                 else
                 if ( wn.is_na )
                     _a.na( wn.na );
             }
+    writeln( "A_SEE: ." );
 }
 
 
 
 alias V = V_!A;
+
 // SList
 struct V_(T)
-    if ( is( T == class ) )
+    if ( is( T == class ) && __traits(hasMember,T,"_next") )
 {
-    _EVT f;
-    _EVT b;
+    T f;
+    T b;
 
 
     T front()
@@ -287,40 +305,29 @@ struct V_(T)
         f = f._next;
     }
 
-    auto save()
-    {
-        return this;
-    }
+    //auto save()
+    //{
+    //    return this;
+    //}
 
-    class _EVT : T
-    {
-        _EVT _next;
-    }
-
-    //auto ma(SUBT,ARGS...)( ARGS args )
     auto ma(SUBT : T,ARGS...)( ARGS args )
         // if ( SUBT is subtype of T )
     {
-        class __EVT : SUBT
-        {
-            _EVT _next;
-        }
-
-        auto ov = new __EVT( args );
+        auto ov = new SUBT( args );
 
         // put at back
         if ( empty )
         {
-            f = cast( _EVT )ov;
-            b = cast( _EVT )ov;
+            f = ov;
+            b = ov;
         }
         else
         {
-            b._next = cast( _EVT )ov;
-            b       = cast( _EVT )ov;
+            b._next = ov;
+            b       = ov;
         }
 
-        return ov;
+        return cast(SUBT)ov;
     }
 }
 
@@ -365,10 +372,6 @@ struct Wana_(T)
         return this;
     }
 
-    //void opOpAssign( string op : "~" )( T b )
-    //{
-    //    //
-    //}
     struct _ET
     {
         T    _super;
