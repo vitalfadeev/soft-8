@@ -53,7 +53,7 @@ class ISee : I
     }
 }
 
-class B: A, SeeAble
+class BSeeAble: A, SeeAble
 {
     void see_able( ISee i )
     {
@@ -82,7 +82,7 @@ unittest
     auto a = new A();
 
     auto i = a.ma!ISee();
-    auto b = a.ma!B();
+    auto b = a.ma!BSeeAble();
 
     i.see( b );
 }
