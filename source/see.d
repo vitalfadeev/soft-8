@@ -125,6 +125,7 @@ class ISee : I
 
 class BSeeAble: A, SeeAble
 {
+    // async
     override
     void wa( Wa wa )
     {
@@ -143,9 +144,11 @@ class BSeeAble: A, SeeAble
 
     void WAT_SEE( Wa wa )
     {
-        //
+        see_able( wa.see.i );
     }
 
+
+    // sync
     void see_able( ISee i )
     {
         //
@@ -315,15 +318,30 @@ enum WAT
     SEE,
 }
 
-struct Wa
+struct _Wa
 {
     WAT t;
+    I   i;
+}
+
+struct Wa
+{
+    union
+    {
+        struct
+        {
+            WAT t;
+            I   i;
+        }
+        _Wa   _;
+        SeeWa see;
+    }
 }
 
 struct SeeWa
 {
-    Wa _super;
-    alias _super this;
+    WAT  t;
+    ISee i;
 }
 
 struct Na
