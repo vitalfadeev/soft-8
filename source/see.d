@@ -256,7 +256,7 @@ unittest
 unittest
 {
     // async
-    Wana wana;
+    //Wana wana;
 
     auto a = ma!A();
     import std.stdio : writeln;
@@ -392,7 +392,7 @@ struct Wana_(T)
 
     auto save()
     {
-        return this;
+        return &this;
     }
 
     struct _ET
