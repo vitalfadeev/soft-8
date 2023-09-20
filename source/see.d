@@ -12,7 +12,7 @@ module see;
 //    see  <-   see_able
 
 //    wa    ->   
-//         <-    ma
+//         <-    na
 
 // i wa o
 //   wa.o -> wana
@@ -85,6 +85,18 @@ unittest
     auto b = a.ma!BSeeAble();
 
     i.see( b );
+}
+
+unittest
+{
+    Wana wana;
+
+    auto a = new A();
+
+    auto i = a.ma!ISee();
+    auto b = a.ma!BSeeAble();
+
+    i.see( b ); // via wana
 }
 
 
@@ -202,4 +214,21 @@ struct Wana_(T)
 struct Wa
 {
     //
+}
+
+struct SeeWa
+{
+    Wa _super;
+    alias _super this;
+}
+
+struct Na
+{
+    //
+}
+
+struct SeeNa
+{
+    Na _super;
+    alias _super this;
 }
