@@ -107,8 +107,8 @@ auto ma(T, ARGS...)( ARGS args )
 
 class A : WaNaAble
 {
+    //A _next;
     V v;
-    A _next;
 
     auto ma(T,ARGS...)( ARGS args )
     {
@@ -222,12 +222,12 @@ class BSeeAble: A, SeeAble
 
         // async return
         // wana <- na NA_SEE,i,this
-        auto na = SeeNa( NA.SEE, wa.i, this );
+        auto na = SeeNa( true, NA.SEE, wa.i, this );
         //writeln( "     sync bk: ", na.t, ": for: ", wa.i );
         //wa.i.na( cast(Na)na );  // direct sync call
 
         writeln( "    async bk: ", na.t, ": for: ", wa.i );
-        Send!SeeNa( NA.SEE, wa.i, this );
+        Send!SeeNa( true, NA.SEE, wa.i, this );
     }
 }
 
@@ -269,20 +269,15 @@ unittest
     import std.stdio : writeln;
     writeln( "A_SEE: " );
 
-    auto saved_v = a.v.save;
-
     // go
-    //for (auto wn=wana.front; !wana.empty; wana.popFront(), wn=wana.front )
     foreach( wn; wana )
-        //for (auto _a=saved_v.front; !saved_v.empty; saved_v.popFront(), _a=saved_v.front )
-        foreach( _a; saved_v )
+        foreach( _a; a.v )
             if ( _a.able )
             {
                 writeln( "  able: ", _a );
-                if ( wn.is_wa )
+                if ( wn.is_na == false )
                     _a.wa( wn.wa );
                 else
-                if ( wn.is_na )
                     _a.na( wn.na );
             }
     writeln( "A_SEE: ." );
@@ -299,7 +294,21 @@ void Send(T,ARGS...)( ARGS args )
 
 
 
-alias V = V_!A;
+import std.container.dlist : DList;
+struct V
+{
+    DList!A _super;
+    alias _super this;
+
+    auto ma(T,ARGS...)( ARGS args )
+    {
+        auto a = .ma!T( args );
+        _super ~= a;
+        return a;
+    }
+}
+
+//alias V = V_!A;
 
 // SList
 struct V_(T)
@@ -316,8 +325,6 @@ struct V_(T)
     void popFront()
     {
         assert( front !is null );
-
-        auto for_free = front;
 
         if ( front._next is null )
         {
@@ -450,8 +457,9 @@ enum WA
 
 struct _Wa
 {
-    WA t;
-    I  i;
+    bool is_na = false;
+    WA   t;
+    I    i;
 }
 
 struct Wa
@@ -460,8 +468,9 @@ struct Wa
     {
         struct
         {
-            WA t = WA._;
-            I  i;
+            bool is_na = false;
+            WA   t = WA._;
+            I    i;
         }
         _Wa   _;
         SeeWa see;
@@ -470,6 +479,7 @@ struct Wa
 
 struct SeeWa
 {
+    bool is_na = false;
     WA   t = WA.SEE;
     ISee i;
 }
@@ -488,9 +498,10 @@ struct Na
     {
         struct
         {
-            NA t = NA._;
-            I  i;
-            B  b;
+            bool is_na = true;
+            NA   t = NA._;
+            I    i;
+            B    b;
         };
         SeeNa see;
     }
@@ -498,9 +509,10 @@ struct Na
 
 struct SeeNa
 {
-    NA t = NA.SEE;
-    I  i;
-    B  b;
+    bool is_na = true;
+    NA   t = NA.SEE;
+    I    i;
+    B    b;
 }
 
 //
@@ -508,21 +520,11 @@ struct AWaNa
 {
     union
     {
-        Wa wa;
-        Na na;
+        bool is_na;
+        Wa   wa;
+        Na   na;
     }
 }
-
-bool is_wa( AWaNa* )
-{
-    return true;
-}
-
-bool is_na( AWaNa* )
-{
-    return true;
-}
-
 
 //
 struct Go
@@ -536,10 +538,9 @@ struct Go
             foreach( a; v )
                 if ( a.able )
                 {
-                    if ( wn.is_wa )
+                    if ( wn.is_na == false )
                         a.wa( wn.wa );
                     else
-                    if ( wn.is_na )
                         a.na( wn.na );
                 }
     }
