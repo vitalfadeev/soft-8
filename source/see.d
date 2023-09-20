@@ -194,6 +194,8 @@ class BSeeAble: A, SeeAble
     override
     void wa( Wa wa )
     {
+        import std.stdio : writeln;
+        writeln( "    async wa: ", wa.t, ": for: ", wa.i );
         switch ( wa.t )
         {
             case WA._   : { WA_( wa );        break; }
@@ -206,13 +208,13 @@ class BSeeAble: A, SeeAble
     void WA_( Wa wa )
     {
         import std.stdio : writeln;
-        writeln( "    _: for: ", wa.i );
+        writeln( "    async ro: ", wa.t, ": for: ", wa.i );
     }
 
     void WA_SEE( SeeWa wa )
     {
         import std.stdio : writeln;
-        writeln( "    SEE: for: ", wa.i );
+        writeln( "    async ro: ", wa.t, ": for: ", wa.i );
         see_able( wa.i );
 
         // async return
@@ -268,7 +270,7 @@ unittest
         foreach( ref _a; a.v )
             if ( _a.able )
             {
-                writeln( "  able:, ", _a );
+                writeln( "  able: ", _a );
                 if ( wn.is_wa )
                     _a.wa( wn.wa );
                 else
