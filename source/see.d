@@ -45,7 +45,7 @@ class I : A
 }
 
 
-class ICanSee : I, ISee
+class ISee : I
 {
     void see( SeeAble b )
     {
@@ -53,17 +53,12 @@ class ICanSee : I, ISee
     }
 }
 
-class ASeeAble: A, SeeAble
+class B: A, SeeAble
 {
     void see_able( ISee i )
     {
         //
     }
-}
-
-interface ISee
-{
-    void see( SeeAble b );
 }
 
 interface SeeAble
@@ -74,13 +69,27 @@ interface SeeAble
 unittest
 {
     Wana wana;
-    auto o = new O();
-    o.ma!I();
+
+    auto a = new A();
+
+    auto i = a.ma!I();
+}
+
+unittest
+{
+    Wana wana;
+
+    auto a = new A();
+
+    auto i = a.ma!ISee();
+    auto b = a.ma!B();
+
+    i.see( b );
 }
 
 
 
-alias V = V_!O;
+alias V = V_!A;
 // SList
 struct V_(T)
 {
@@ -153,12 +162,12 @@ struct Wana_(T)
 
     T front()
     {
-        return cast(T)f;
+        return cast(T)f.o;
     }
 
     T back()
     {
-        return cast(T)b;
+        return cast(T)b.o;
     }
 
     bool empty()
