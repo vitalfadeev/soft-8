@@ -24,17 +24,15 @@ module see;
 // pool -> done
 //   .done           // (o)
 
-
 class O
 {
     V v;
 
     auto ma(T,ARGS...)( ARGS args )
     {
-        auto o = new T( args );
-        v ~= o;
-        return o;
+        return v.ma!T( args );
     }
+
 }
 
 
@@ -46,34 +44,122 @@ class I : O
     }
 }
 
-
-// FIFO
-struct V
+unittest
 {
-    OV front;
-    OV back;
+    Pool pool;
+    auto o = new O();
+    o.ma!I();
+}
+
+
+
+alias V = V_!O;
+// SList
+struct V_(T)
+{
+    TV* f;
+    TV* b;
 
     auto ma(T,ARGS...)( ARGS args )
     {
         auto o  = new T( args );
-        auto ov = new OV( o, back );
+        auto ov = new TV( o, b );
 
         // put at back
-        if ( front is null )
+        if ( empty )
         {
-            front = ov;
-            back = ov;
+            f = ov;
+            b = ov;
         }
         else
-            back = ov;
+            b = ov;
 
         return o;
     }
 
-    struct OV
+    T front()
     {
-        O  o;
-        OV next;
+        return cast(T)f;
+    }
+
+    T back()
+    {
+        return cast(T)b;
+    }
+
+    bool empty()
+    {
+        return (f is null);
+    }
+
+    void popFront()
+    {
+        assert( f !is null );
+        f = f.next;
+    }
+
+    auto save()
+    {
+        return this;
+    }
+
+    struct TV
+    {
+        T   o;
+        TV* next;
+
+        auto opCast( T )()
+        {
+            return o;
+        }
+    }
+}
+
+
+// <- wa
+// -> wa
+alias Pool = Pool_!O;
+// FIFO
+struct Pool_(T)
+{
+    TV* f;
+    TV* b;
+
+    T front()
+    {
+        return cast(T)f;
+    }
+
+    T back()
+    {
+        return cast(T)b;
+    }
+
+    bool empty()
+    {
+        return (f is null);
+    }
+
+    void popFront()
+    {
+        assert( f !is null );
+        f = f.next;
+    }
+
+    auto save()
+    {
+        return this;
+    }
+
+    struct TV
+    {
+        T   o;
+        TV* next;
+
+        auto opCast( T )()
+        {
+            return o;
+        }
     }
 }
 
@@ -81,10 +167,4 @@ struct V
 struct Wa
 {
     //
-}
-
-struct Pool
-{
-    // <- wa
-    // -> wa
 }
