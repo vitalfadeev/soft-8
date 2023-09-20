@@ -4,9 +4,9 @@ module see;
 //  / \
 // i   o
 
-//          o
+//          A
 //         / \        ma
-//        i   o
+//        i   b
 //       /     \
 //    see   ->  see_able
 //    see  <-   see_able
@@ -25,7 +25,7 @@ module see;
 // wana -> na
 //   .na           // (o)
 
-class O
+class A
 {
     V v;
 
@@ -33,11 +33,10 @@ class O
     {
         return v.ma!T( args );
     }
-
 }
 
 
-class I : O
+class I : A
 {
     auto wa(T,ARGS...)( ARGS args )
     {
@@ -46,17 +45,17 @@ class I : O
 }
 
 
-class ICanSee: I, ISee
+class ICanSee : I, ISee
 {
-    void see( ISeeAble o )
+    void see( SeeAble b )
     {
         //
     }
 }
 
-class OSeeAble: O, ISeeAble
+class ASeeAble: A, SeeAble
 {
-    void see_able( ISee o )
+    void see_able( ISee i )
     {
         //
     }
@@ -64,12 +63,12 @@ class OSeeAble: O, ISeeAble
 
 interface ISee
 {
-    void see( ISeeAble o );
+    void see( SeeAble b );
 }
 
-interface ISeeAble
+interface SeeAble
 {
-    void see_able( ISee o );
+    void see_able( ISee i );
 }
 
 unittest
