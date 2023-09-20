@@ -88,7 +88,15 @@ class WaAble : Able
     }
 }
 
-class A : WaAble
+class WaNaAble : WaAble
+{
+    void na( Na na )
+    {
+        //
+    }
+}
+
+class A : WaNaAble
 {
     V v;
 
@@ -126,22 +134,26 @@ class ISee : I
     }
 
     // async
+    override
     void na( Na na )
     {
         switch ( na.t )
         {
-            case NAT._   : { break; }
+            case NAT._   : { NAT_( na );        break; }
             case NAT.SEE : { NAT_SEE( na.see ); break; }
             default: break;
         }
+    }
+
+    void NAT_( Na na )
+    {
+        //
     }
 
     void NAT_SEE( SeeNa na )
     {
         //
     }
-
-
 }
 
 class BSeeAble: A, SeeAble
@@ -289,7 +301,8 @@ struct V_(T)
 
 
 // wa <- wana <- wa
-alias Wana = Wana_!Wa;
+alias Wana  = Wana_!Wa;
+alias AWana = Wana_!AWaNa;
 // FIFO
 struct Wana_(T)
 {
@@ -368,6 +381,7 @@ struct SeeWa
 }
 
 
+//
 enum NAT
 {
     _,
@@ -393,18 +407,46 @@ struct SeeNa
     B   b;
 }
 
+//
+struct AWaNa
+{
+    union
+    {
+        Wa wa;
+        Na na;
+    }
+}
 
+bool is_wa( AWaNa )
+{
+    return true;
+}
+
+bool is_na( AWaNa )
+{
+    return true;
+}
+
+
+//
 struct Go
 {
     static
-    Wana wana;
+    //Wana  wana;
+    AWana awana;
 
     void go( V v )
     {
-        foreach( wa; wana )
+        foreach( wn; awana )
             foreach( a; v )
                 if ( a.able )
-                    a.wa( wa );
+                {
+                    if ( wn.is_wa )
+                        a.wa( wn.wa );
+                    else
+                    if ( wn.is_na )
+                        a.na( wn.na );
+                }
     }
 }
 
