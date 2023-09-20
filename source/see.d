@@ -130,12 +130,18 @@ class BSeeAble: A, SeeAble
     {
         switch ( wa.t )
         {
-            case WAT._: { WAT_( wa ); break; }
+            case WAT._   : { WAT_( wa );    break; }
+            case WAT.SEE : { WAT_SEE( wa ); break; }
             default: break;
         }
     }
 
     void WAT_( Wa wa )
+    {
+        //
+    }
+
+    void WAT_SEE( Wa wa )
     {
         //
     }
@@ -306,6 +312,7 @@ struct Wana_(T)
 enum WAT
 {
     _,
+    SEE,
 }
 
 struct Wa
