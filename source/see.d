@@ -1,5 +1,6 @@
 module see;
 
+
 //   o
 //  / \
 // i   o
@@ -134,6 +135,11 @@ class ISee : I
     }
 
     // async
+    void a_see( AWana awana, SeeAble b )
+    {
+        auto wa = awana.ma!SeeWa();
+    }
+
     override
     void na( Na na )
     {
@@ -147,12 +153,14 @@ class ISee : I
 
     void NAT_( Na na )
     {
-        //
+        import std.stdio : writeln;
+        writeln( "_: from: ", na.b );
     }
 
     void NAT_SEE( SeeNa na )
     {
-        //
+        import std.stdio : writeln;
+        writeln( "SEE: from: ", na.b );
     }
 }
 
@@ -168,7 +176,8 @@ class BSeeAble: A, SeeAble
     // sync
     void see_able( ISee i )
     {
-        //
+        import std.stdio : writeln;
+        writeln( "SEE: for: ", i );
     }
 
     // async
@@ -186,7 +195,8 @@ class BSeeAble: A, SeeAble
     // async -> sync()
     void WAT_( Wa wa )
     {
-        //
+        import std.stdio : writeln;
+        writeln( "_: for: ", wa.i );
     }
 
     void WAT_SEE( SeeWa wa )
@@ -225,6 +235,7 @@ unittest
 
 unittest
 {
+    // sync
     Wana wana;
 
     auto a = new A();
@@ -235,31 +246,31 @@ unittest
     i.see( b ); // via wana
 }
 
+unittest
+{
+    // async
+    AWana awana;
+
+    auto a = new A();
+
+    auto i = a.ma!ISee();
+    auto b = a.ma!BSeeAble();
+
+    i.a_see( awana, b ); // via awana
+}
+
 
 
 alias V = V_!A;
 // SList
 struct V_(T)
+//struct V_(T : class)
+//struct V_( class T )
+    if ( is( T == class ) )
 {
-    TV* f;
-    TV* b;
+    _EVT f;
+    _EVT b;
 
-    auto ma(T,ARGS...)( ARGS args )
-    {
-        auto o  = new T( args );
-        auto ov = new TV( o, b );
-
-        // put at back
-        if ( empty )
-        {
-            f = ov;
-            b = ov;
-        }
-        else
-            b = ov;
-
-        return o;
-    }
 
     T front()
     {
@@ -279,7 +290,7 @@ struct V_(T)
     void popFront()
     {
         assert( f !is null );
-        f = f.next;
+        f = f._next;
     }
 
     auto save()
@@ -287,15 +298,32 @@ struct V_(T)
         return this;
     }
 
-    struct TV
+    class _EVT : T
     {
-        T   o;
-        TV* next;
+        _EVT _next;
+    }
 
-        auto opCast( T )()
+    //auto ma(SUBT,ARGS...)( ARGS args )
+    auto ma(SUBT : T,ARGS...)( ARGS args )
+        // if ( SUBT is subtype of T )
+    {
+        class __EVT : SUBT
         {
-            return o;
+            _EVT _next;
         }
+
+        auto ov = new __EVT( args );
+
+        // put at back
+        if ( empty )
+        {
+            f = cast( _EVT )ov;
+            b = cast( _EVT )ov;
+        }
+        else
+            b = cast( _EVT )ov;
+
+        return ov;
     }
 }
 
@@ -308,6 +336,7 @@ struct Wana_(T)
 {
     TV* f;
     TV* b;
+    alias TV = TV_!T;
 
     T front()
     {
@@ -327,7 +356,12 @@ struct Wana_(T)
     void popFront()
     {
         assert( f !is null );
+
+        auto _f = f;
+
         f = f.next;
+
+        _f.destroy;
     }
 
     auto save()
@@ -335,15 +369,41 @@ struct Wana_(T)
         return this;
     }
 
-    struct TV
+    //void opOpAssign( string op : "~" )( T b )
+    //{
+    //    //
+    //}
+
+    struct TV_(T)
     {
         T   o;
         TV* next;
+
+        this( TV* next )
+        {
+            this.next = next;
+        }
 
         auto opCast( T )()
         {
             return o;
         }
+    }
+
+    auto ma(T,ARGS...)( ARGS args )
+    {
+        auto ov = new TV( b );
+
+        // put at back
+        if ( empty )
+        {
+            f = ov;
+            b = ov;
+        }
+        else
+            b = ov;
+
+        return ov.o;
     }
 }
 
@@ -366,7 +426,7 @@ struct Wa
     {
         struct
         {
-            WAT t;
+            WAT t = WAT._;
             I   i;
         }
         _Wa   _;
@@ -376,7 +436,7 @@ struct Wa
 
 struct SeeWa
 {
-    WAT  t;
+    WAT  t = WAT.SEE;
     ISee i;
 }
 
@@ -394,7 +454,7 @@ struct Na
     {
         struct
         {
-            NAT t;
+            NAT t = NAT._;
             B   b;
         };
         SeeNa see;
@@ -403,7 +463,7 @@ struct Na
 
 struct SeeNa
 {
-    NAT t;
+    NAT t = NAT.SEE;
     B   b;
 }
 
