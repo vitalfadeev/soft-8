@@ -241,6 +241,18 @@ unittest
     auto b = a.ma!BSeeAble();
 
     i.a_see( wana, b ); // via wana
+
+    // go
+    foreach( wn; wana )
+        foreach( _a; a.v )
+            if ( _a.able )
+            {
+                if ( wn.is_wa )
+                    _a.wa( wn.wa );
+                else
+                if ( wn.is_na )
+                    _a.na( wn.na );
+            }
 }
 
 
