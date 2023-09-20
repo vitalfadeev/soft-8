@@ -272,17 +272,26 @@ unittest
     writeln( a.v.f );
 
     // go
-    foreach( ref wn; wana )
-        foreach( ref _a; a.v )
-            if ( _a.able )
-            {
-                writeln( "  able: ", _a );
-                if ( wn.is_wa )
-                    _a.wa( wn.wa );
-                else
-                if ( wn.is_na )
-                    _a.na( wn.na );
-            }
+    //foreach( ref wn; wana )
+    writeln( "wana.f: ", wana.f );
+    writeln( "wana.b: ", wana.f );
+
+    wana.popFront();
+    writeln( "wana.f: ", wana.f );
+    writeln( "wana.b: ", wana.f );
+
+    //for ( auto wn = wana.front; false; wana.popFront() )
+        //writeln( wn );
+        //foreach( ref _a; a.v )
+        //    if ( _a.able )
+        //    {
+        //        writeln( "  able: ", _a );
+        //        if ( wn.is_wa )
+        //            _a.wa( wn.wa );
+        //        else
+        //        if ( wn.is_na )
+        //            _a.na( wn.na );
+        //    }
     writeln( "A_SEE: ." );
 }
 
@@ -361,8 +370,8 @@ alias Wana = Wana_!AWaNa;
 struct Wana_(T)
     if ( is( T == struct ))
 {
-    _ET* f;
-    _ET* b;
+    _E* f;
+    _E* b;
 
     T front()
     {
@@ -383,11 +392,18 @@ struct Wana_(T)
     {
         assert( f !is null );
 
-        auto _f = f;
+        auto for_free = f;
 
-        f = f._next;
+        if ( f._next is null )
+        {
+            f = f._next;
+            b = null;
+        }
+        else
+            f = f._next;
+            
 
-        _f.destroy();
+        for_free.destroy();
     }
 
     auto save()
@@ -395,33 +411,33 @@ struct Wana_(T)
         return &this;
     }
 
-    struct _ET
+    struct _E
     {
-        T    _super;
-        _ET* _next;
+        _E* _next;
+        T   _super;
     }
 
     auto ma(SUBT,ARGS...)( ARGS args )
         // if ( SUBT inherited from T )
     {
-        struct __ET
+        struct __E
         {
+            _E*  _next;
             SUBT _super;
-            _ET* _next;
         }
 
-        auto ov = new __ET( SUBT(args) );
+        auto ov = new __E( null, SUBT(args) );
 
         // put at back
         if ( empty )
         {
-            f = cast(_ET*)ov;
-            b = cast(_ET*)ov;
+            f = cast(_E*)ov;
+            b = cast(_E*)ov;
         }
         else
         {
-            b._next = cast(_ET*)ov;
-            b       = cast(_ET*)ov;
+            b._next = cast(_E*)ov;
+            b       = cast(_E*)ov;
         }
 
         return &ov._super;
