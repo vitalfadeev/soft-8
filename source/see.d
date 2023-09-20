@@ -147,6 +147,7 @@ class ISee : I
     void a_see( ref Wana wana, SeeAble b )
     {
         auto wa = wana.ma!SeeWa();
+        wa.i = this;
     }
 
     override
@@ -186,7 +187,7 @@ class BSeeAble: A, SeeAble
     void see_able( ISee i )
     {
         import std.stdio : writeln;
-        writeln( "SEE: for: ", i );
+        writeln( "    SEE: for: ", i );
     }
 
     // async
@@ -236,7 +237,7 @@ unittest
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.see( b ); // via wana
+    i.see( b ); // sync call
 }
 
 unittest
@@ -251,7 +252,7 @@ unittest
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.a_see( wana, b ); // via wana
+    i.a_see( wana, b ); // async call via wana
     import std.stdio : writeln;
     writeln( "A_SEE: " );
     writeln( "A_SEE front: ", wana.f );
@@ -262,7 +263,7 @@ unittest
         foreach( ref _a; a.v )
             if ( _a.able )
             {
-                writeln( "able" );
+                writeln( "  able:, ", _a );
                 if ( wn.is_wa )
                     _a.wa( wn.wa );
                 else
