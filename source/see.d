@@ -1,11 +1,6 @@
 module see;
 
-
-
-
-//   o
-//  / \
-// i   o
+// ma
 
 //          A
 //         / \        ma
@@ -100,6 +95,12 @@ class WaNaAble : WaAble
 }
 
 auto ma(T, ARGS...)( ARGS args )
+    if ( is( T == class ) )
+{
+    return new T( args );
+}
+auto ma(T, ARGS...)( ARGS args )
+    if ( is( T == struct ) )
 {
     return new T( args );
 }
@@ -343,7 +344,7 @@ struct V_(T)
     auto ma(SUBT : T,ARGS...)( ARGS args )
         // if ( SUBT is subtype of T )
     {
-        auto ov = new SUBT( args );
+        auto ov = .ma!SUBT( args );
 
         // put at back
         if ( empty )
@@ -364,6 +365,7 @@ struct V_(T)
 
 // wa <- wana <- wa
 alias Wana = Wana_!AWaNa;
+
 // FIFO
 struct Wana_(T)
     if ( is( T == struct ))
@@ -430,7 +432,7 @@ struct Wana_(T)
             SUBT _super;
         }
 
-        auto ov = new __E( null, SUBT(args) );
+        auto ov = .ma!__E( null, SUBT(args) );
 
         // put at back
         if ( empty )
