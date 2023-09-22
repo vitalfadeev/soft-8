@@ -98,7 +98,7 @@ void async(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
 void wrapped_dg(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
 {
 	dg( args );
-	mawana!AsyncNa( NA.ASYNC, then_ );
+	mawana!AsyncNa( then_ );
 }
 
 

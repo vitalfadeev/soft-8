@@ -131,13 +131,8 @@ class A : WaNaAble
 }
 
 
+alias I = A;
 alias B = A;
-
-
-class I : A
-{
-    //
-}
 
 
 class ISee : I
@@ -155,7 +150,7 @@ class ISee : I
         b.see_able( this );
     }
 
-    // async
+    // wana-see
     void wana_see( SeeAble b )
     {
         auto wa = mawana!SeeWa();
@@ -233,7 +228,7 @@ class BSeeAble: A, SeeAble
         see_able( wa.i );
 
         // async return
-        mawana!SeeNa( NA.SEE, wa.i, this );
+        mawana!SeeNa( wa.i, this );
     }
 }
 
@@ -287,7 +282,7 @@ unittest
 // Send!SeeNa( NA.SEE, wa.i, this );  // wana call
 auto mawana(T,ARGS...)( ARGS args )
 {
-    return Game.wana.ma!T( args );  // wana call
+    return Game.wana.ma!T( T.t.init, args );  // wana call
 }
 
 
