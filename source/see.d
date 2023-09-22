@@ -86,7 +86,15 @@ class WaAble : Able
     }
 }
 
-class WaNaAble : WaAble
+class NaAble : WaAble
+{
+    void na( Na na )
+    {
+        //
+    }
+}
+
+class WaNaAble : NaAble
 {
     void wana( WaNa* wn )
     {
@@ -96,10 +104,6 @@ class WaNaAble : WaAble
             na( wn.na );
     }
 
-    void na( Na na )
-    {
-        //
-    }
 }
 
 auto ma(T, ARGS...)( ARGS args )
