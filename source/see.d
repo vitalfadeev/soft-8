@@ -153,7 +153,7 @@ class ISee : I
     // wana-see
     void wana_see( SeeAble b )
     {
-        auto wa = mawana!SeeWa();
+        auto wa = .wa!SeeWa();
         wa.i = this;
     }
 
@@ -228,7 +228,7 @@ class BSeeAble: A, SeeAble
         see_able( wa.i );
 
         // async return
-        mawana!SeeNa( wa.i, this );
+        .na!SeeNa( wa.i, this );
     }
 }
 
@@ -284,6 +284,8 @@ auto mawana(T,ARGS...)( ARGS args )
 {
     return Game.wana.ma!T( args );  // wana call
 }
+alias wa = mawana;
+alias na = mawana;
 
 
 
