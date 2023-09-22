@@ -282,7 +282,7 @@ unittest
 // Send!SeeNa( NA.SEE, wa.i, this );  // wana call
 auto mawana(T,ARGS...)( ARGS args )
 {
-    return Game.wana.ma!T( T.t.init, args );  // wana call
+    return Game.wana.ma!T( args );  // wana call
 }
 
 
@@ -422,6 +422,7 @@ struct Wana_(T)
 
     auto ma(SUBT,ARGS...)( ARGS args )
         // if ( SUBT inherited from T )
+        // if ( SUBT inherited from ( Wa || NA || WaNa ) )
     {
         struct __E
         {
@@ -429,7 +430,7 @@ struct Wana_(T)
             SUBT _super;
         }
 
-        auto ov = .ma!__E( null, SUBT(args) );
+        auto ov = .ma!__E( null, SUBT(SUBT.init.t, args) );
 
         // put at back
         if ( empty )
@@ -477,6 +478,7 @@ struct Wa
 
 struct SeeWa
 {
+    const
     WA   t = WA.SEE;
     ISee i;
 }
@@ -508,12 +510,14 @@ struct Na
 alias THEN = void delegate();
 struct AsyncNa
 {
+    const
     NA   t = NA.ASYNC;
     THEN then_;
 }
 
 struct SeeNa
 {
+    const
     NA t = NA.SEE;
     I  i;
     B  b;
