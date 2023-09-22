@@ -73,25 +73,6 @@ class DownloadI : I
 	{
 		writeln( "THEN" );
 	}
-
-	override
-	void na( Na na )
-	{
-		//writeln( "na(): ", na );
-
-		if ( na.t == NA.ASYNC ) 
-			NA_ASYNC( na.async );
-	}
-
-	void NA_ASYNC( AsyncNa async_ )
-	{
-		if ( async_.i is this )
-		{
-			writeln( "NA_ASYNC: THEN!" );
-			async_.then_();
-			writeln( "NA_ASYNC: ." );
-		}
-	}
 }
 
 
@@ -101,30 +82,25 @@ void fn()
 }
 
 
-void async(DG,I,B,THEN,ARGS...)( DG dg, I i, B b, THEN then_, ARGS args )
+void async(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
 {
     import std.parallelism;
 
 
     writeln( "async:" );
 
-    auto async_task = task!wrapped_dg( dg, i, b, then_, args );
+    auto async_task = task!wrapped_dg( dg, then_, args );
     async_task.executeInNewThread();
 
     writeln( "async: ." );
 }
 
-void wrapped_dg(DG,I,B,THEN,ARGS...)( DG dg, I i, B b, THEN then_, ARGS args )
+void wrapped_dg(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
 {
 	dg( args );
-	Send!AsyncNa( NA.ASYNC, i, b, then_ );
+	Game.wana.ma!AsyncNa( NA.ASYNC, then_ );
 }
 
-
-class AParallel : A
-{
-	//
-}
 
 
 void i_wa_download( string url )
@@ -136,7 +112,7 @@ void i_wa_download( string url )
 	auto b = a.ma!DownloadI();
 	RSTRING ret;
 
-	async( &i.download, i, b, &i.then_, url, ret );
+	async( &i.download, &i.then_, url, ret );
 	  // .then is DownloadA.NA_ASYNC()
 
 	writeln( "i_wa_download: ." );

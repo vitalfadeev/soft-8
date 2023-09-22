@@ -514,8 +514,6 @@ alias THEN = void delegate();
 struct AsyncNa
 {
     NA   t = NA.SEE;
-    I    i;
-    B    b;
     THEN then_;
 }
 
