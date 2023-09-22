@@ -109,6 +109,7 @@ auto ma(T, ARGS...)( ARGS args )
 class A : WaNaAble
 {
     //A _next;
+    static __gshared
     V v;
 
     auto ma(T,ARGS...)( ARGS args )
@@ -284,13 +285,10 @@ unittest
     writeln( "A_SEE: ." );
 }
 
-static
-Wana wana;
-
-// Send!SeeNa( NA.SEE, wa.i, this );  // async call
+// Send!SeeNa( NA.SEE, wa.i, this );  // wana call
 void Send(T,ARGS...)( ARGS args )
 {
-    wana.ma!T( args );  // async call
+    Game.wana.ma!T( args );  // wana call
 }
 
 
@@ -364,7 +362,7 @@ struct V_(T)
 
 
 // wa <- wana <- wa
-alias Wana = Wana_!AWaNa;
+alias Wana = Wana_!WaNa;
 
 // FIFO
 struct Wana_(T)
@@ -422,6 +420,11 @@ struct Wana_(T)
         _E* _next;
         T   _super;
     }
+
+    //void opAssign( string op : "~", ARGS... )( ARGS args )
+    //{
+    //    this.ma!T( args );
+    //}
 
     auto ma(SUBT,ARGS...)( ARGS args )
         // if ( SUBT inherited from T )
@@ -503,8 +506,18 @@ struct Na
             I  i;
             B  b;
         };
-        SeeNa see;
+        AsyncNa async;
+        SeeNa   see;
     }
+}
+
+alias THEN = void delegate();
+struct AsyncNa
+{
+    NA   t = NA.SEE;
+    I    i;
+    B    b;
+    THEN then_;
 }
 
 struct SeeNa
@@ -515,7 +528,7 @@ struct SeeNa
 }
 
 //
-struct AWaNa
+struct WaNa
 {
     union
     {
@@ -526,33 +539,40 @@ struct AWaNa
 }
 
 bool is_wa(T)( T wa )
-    if ( is( T : Wa ) || is( T : Wa* ) || is( T : AWaNa ) || is( T : AWaNa* ) )
+    if ( is( T : Wa ) || is( T : Wa* ) || is( T : WaNa ) || is( T : WaNa* ) )
 {
     return ( wa.t & 1 ) == 0;
 }
 bool is_na(T)( T na )
-    if ( is( T : Na ) || is( T : Na* ) || is( T : AWaNa ) || is( T : AWaNa* ) )
+    if ( is( T : Na ) || is( T : Na* ) || is( T : WaNa ) || is( T : WaNa* ) )
 {
     return ( na.t & 1 ) != 0;
 }
 
 //
-struct Go
+struct Game
 {
-    static
+    static __gshared
     Wana wana;
 
-    void go( V v )
+    void go()
     {
         foreach( wn; wana )
-            foreach( a; v )
+        {
+            import std.stdio : writeln;
+            if (wn.is_wa) 
+                writeln( "wn: ", wn.wa.t );
+            else
+                writeln( "wn: ", wn.na.t ); 
+            foreach( a; A.v )
                 if ( a.able )
                 {
-                    if ( wn.is_na == false )
+                    if ( wn.is_wa )
                         a.wa( wn.wa );
                     else
                         a.na( wn.na );
                 }
+        }
     }
 }
 
