@@ -109,7 +109,6 @@ void i_wa_download( string url )
 
     auto a = ma!A();
 	auto i = a.ma!DownloadI();
-	auto b = a.ma!DownloadI();
 	RSTRING ret;
 
 	async( &i.download, &i.then_, url, ret );

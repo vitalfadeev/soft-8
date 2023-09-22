@@ -513,7 +513,7 @@ struct Na
 alias THEN = void delegate();
 struct AsyncNa
 {
-    NA   t = NA.SEE;
+    NA   t = NA.ASYNC;
     THEN then_;
 }
 
