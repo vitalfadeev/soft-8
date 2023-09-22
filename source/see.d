@@ -157,7 +157,6 @@ class ISee : I
     void na( Na na )
     {
         import std.stdio : writeln;
-        writeln( "    async na: ", na.t, ": for: ", na.i, ": from: ", na.b );
         switch ( na.t )
         {
             case NA._   : { NA_( na );        break; }
