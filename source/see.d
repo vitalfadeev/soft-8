@@ -223,12 +223,12 @@ class BSeeAble: A, SeeAble
 
         // async return
         // wana <- na NA_SEE,i,this
-        auto na = SeeNa( true, NA.SEE, wa.i, this );
+        auto na = SeeNa( NA.SEE, wa.i, this );
         //writeln( "     sync bk: ", na.t, ": for: ", wa.i );
         //wa.i.na( cast(Na)na );  // direct sync call
 
         writeln( "    async bk: ", na.t, ": for: ", wa.i );
-        Send!SeeNa( true, NA.SEE, wa.i, this );
+        Send!SeeNa( NA.SEE, wa.i, this );
     }
 }
 
@@ -276,7 +276,7 @@ unittest
             if ( _a.able )
             {
                 writeln( "  able: ", _a );
-                if ( wn.is_na == false )
+                if ( wn.is_wa )
                     _a.wa( wn.wa );
                 else
                     _a.na( wn.na );
@@ -452,16 +452,16 @@ struct Wana_(T)
 
 
 enum WA
-{        // odd bit = 1 is NA
-    _,   
-    SEE,
+{        // odd bit = 0 is WA
+    _     = 0x0000 << 1,
+    ASYNC = 0x0001 << 1,
+    SEE   = 0x0002 << 1,
 }
 
 struct _Wa
 {
-    bool is_na = false;
-    WA   t;
-    I    i;
+    WA t;
+    I  i;
 }
 
 struct Wa
@@ -470,9 +470,8 @@ struct Wa
     {
         struct
         {
-            bool is_na = false;
-            WA   t = WA._;
-            I    i;
+            WA t = WA._;
+            I  i;
         }
         _Wa   _;
         SeeWa see;
@@ -481,7 +480,6 @@ struct Wa
 
 struct SeeWa
 {
-    bool is_na = false;
     WA   t = WA.SEE;
     ISee i;
 }
@@ -489,9 +487,10 @@ struct SeeWa
 
 //
 enum NA
-{
-    _,
-    SEE,
+{        // odd bit = 1 is NA
+    _     = WA._     | 1,
+    ASYNC = WA.ASYNC | 1,
+    SEE   = WA.SEE   | 1,
 }
 
 struct Na
@@ -500,10 +499,9 @@ struct Na
     {
         struct
         {
-            bool is_na = true;
-            NA   t = NA._;
-            I    i;
-            B    b;
+            NA t = NA._;
+            I  i;
+            B  b;
         };
         SeeNa see;
     }
@@ -511,10 +509,9 @@ struct Na
 
 struct SeeNa
 {
-    bool is_na = true;
-    NA   t = NA.SEE;
-    I    i;
-    B    b;
+    NA t = NA.SEE;
+    I  i;
+    B  b;
 }
 
 //
@@ -522,10 +519,21 @@ struct AWaNa
 {
     union
     {
-        bool is_na;
-        Wa   wa;
-        Na   na;
+        typeof(Wa.t) t;
+        Wa wa;
+        Na na;
     }
+}
+
+bool is_wa(T)( T wa )
+    if ( is( T : Wa ) || is( T : Wa* ) || is( T : AWaNa ) || is( T : AWaNa* ) )
+{
+    return ( wa.t & 1 ) == 0;
+}
+bool is_na(T)( T na )
+    if ( is( T : Na ) || is( T : Na* ) || is( T : AWaNa ) || is( T : AWaNa* ) )
+{
+    return ( na.t & 1 ) != 0;
 }
 
 //
