@@ -266,13 +266,13 @@ unittest
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.a_see( wana, b ); // async call via wana
+    i.a_see( Game.wana, b ); // async call via wana
     
     import std.stdio : writeln;
     writeln( "A_SEE: " );
 
     // go
-    foreach( wn; wana )
+    foreach( wn; Game.wana )
         foreach( _a; a.v )
             if ( _a.able )
             {
@@ -532,21 +532,19 @@ struct WaNa
 {
     union
     {
-        typeof(Wa.t) t;
         Wa wa;
         Na na;
     }
-}
 
-bool is_wa(T)( T wa )
-    if ( is( T : Wa ) || is( T : Wa* ) || is( T : WaNa ) || is( T : WaNa* ) )
-{
-    return ( wa.t & 1 ) == 0;
-}
-bool is_na(T)( T na )
-    if ( is( T : Na ) || is( T : Na* ) || is( T : WaNa ) || is( T : WaNa* ) )
-{
-    return ( na.t & 1 ) != 0;
+    auto is_wa()
+    {
+        return wa.t & 1;
+    }
+
+    auto is_na()
+    {
+        return ( na.t & 1 ) != 0;
+    }
 }
 
 //
@@ -558,12 +556,20 @@ struct Game
     void go()
     {
         foreach( wn; wana )
-        {
-            import std.stdio : writeln;
-            if (wn.is_wa) 
-                writeln( "wn: ", wn.wa.t );
-            else
-                writeln( "wn: ", wn.na.t ); 
+            sense( wn );
+    }
+
+    void sense( WaNa* wn )
+    {
+        //import std.stdio : writeln;
+        //if (wn.is_wa) 
+        //    writeln( "wn: ", wn.wa.t );
+        //else
+        //    writeln( "wn: ", wn.na.t );
+
+        if ( wn.is_na && wn.na.t == NA.ASYNC )
+            wn.na.async.then_();
+        else
             foreach( a; A.v )
                 if ( a.able )
                 {
@@ -572,7 +578,6 @@ struct Game
                     else
                         a.na( wn.na );
                 }
-        }
     }
 }
 
