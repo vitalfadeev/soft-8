@@ -80,7 +80,11 @@ class Able
 
 class WaAble : Able
 {
-    void wa( Wa wa )
+    auto wa(T,ARGS...)( ARGS args )
+    {
+        return .wa!T( args );
+    }
+    void on_na( Na na )
     {
         //
     }
@@ -88,20 +92,24 @@ class WaAble : Able
 
 class NaAble : WaAble
 {
-    void na( Na na )
+    void on_wa( Wa na )
     {
         //
+    }
+    auto na(T,ARGS...)( ARGS args )
+    {
+        return .na!T( this, args );
     }
 }
 
 class WaNaAble : NaAble
 {
-    void wana( WaNa* wn )
+    void on_wana( WaNa* wn )
     {
         if ( wn.is_wa )
-            wa( wn.wa );
+            on_wa( wn.wa );
         else
-            na( wn.na );
+            on_na( wn.na );
     }
 
 }
@@ -151,14 +159,14 @@ class ISee : I
     }
 
     // wana-see
-    void wana_see( SeeAble b )
+    void wa_see( SeeAble b )
     {
-        auto wa = .wa!SeeWa();
-        wa.i = this;
+        auto w = wa!SeeWa();
+        w.i = this;
     }
 
     override
-    void na( Na na )
+    void on_na( Na na )
     {
         import std.stdio : writeln;
         switch ( na.t )
@@ -200,7 +208,7 @@ class BSeeAble: A, SeeAble
 
     // async
     override
-    void wa( Wa wa )
+    void on_wa( Wa wa )
     {
         import std.stdio : writeln;
         writeln( "    async wa: ", wa.t, ": for: ", wa.i );
@@ -265,7 +273,7 @@ unittest
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.wana_see( b ); // async call via wana
+    i.wa_see( b ); // async call via wana
     
     import std.stdio : writeln;
     writeln( "A_SEE: " );
@@ -274,7 +282,7 @@ unittest
     foreach( wn; Game.wana )
         foreach( _a; A.v )
             if ( _a.able )
-                _a.wana( wn );
+                _a.on_wana( wn );
 
     writeln( "A_SEE: ." );
 }
@@ -559,7 +567,7 @@ struct Game
             else
                 foreach( a; A.v )
                     if ( a.able )
-                        a.wana( wn );
+                        a.on_wana( wn );
     }
 }
 
