@@ -88,6 +88,14 @@ class WaAble : Able
 
 class WaNaAble : WaAble
 {
+    void wana( WaNa* wn )
+    {
+        if ( wn.is_wa )
+            wa( wn.wa );
+        else
+            na( wn.na );
+    }
+
     void na( Na na )
     {
         //
@@ -124,10 +132,7 @@ alias B = A;
 
 class I : A
 {
-    auto wa(T,ARGS...)( ARGS args )
-    {
-        return ma!T( args );
-    }
+    //
 }
 
 
@@ -228,7 +233,7 @@ class BSeeAble: A, SeeAble
         //wa.i.na( cast(Na)na );  // direct sync call
 
         writeln( "    async bk: ", na.t, ": for: ", wa.i );
-        Send!SeeNa( NA.SEE, wa.i, this );
+        Game.wana.ma!SeeNa( NA.SEE, wa.i, this );
     }
 }
 
@@ -569,12 +574,7 @@ struct Game
         else
             foreach( a; A.v )
                 if ( a.able )
-                {
-                    if ( wn.is_wa )
-                        a.wa( wn.wa );
-                    else
-                        a.na( wn.na );
-                }
+                    a.wana( wn );
     }
 }
 
