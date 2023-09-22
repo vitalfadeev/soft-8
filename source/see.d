@@ -148,13 +148,13 @@ class ISee : I
     // sync
     void see( SeeAble b )
     {
-        //
+        b.see_able( this );
     }
 
     // async
-    void a_see( ref Wana wana, SeeAble b )
+    void wana_see( SeeAble b )
     {
-        auto wa = wana.ma!SeeWa();
+        auto wa = mawana!SeeWa();
         wa.i = this;
     }
 
@@ -224,16 +224,12 @@ class BSeeAble: A, SeeAble
     {
         import std.stdio : writeln;
         writeln( "    async ro: ", wa.t, ": for: ", wa.i );
+
+        // sync call
         see_able( wa.i );
 
         // async return
-        // wana <- na NA_SEE,i,this
-        auto na = SeeNa( NA.SEE, wa.i, this );
-        //writeln( "     sync bk: ", na.t, ": for: ", wa.i );
-        //wa.i.na( cast(Na)na );  // direct sync call
-
-        writeln( "    async bk: ", na.t, ": for: ", wa.i );
-        Game.wana.ma!SeeNa( NA.SEE, wa.i, this );
+        mawana!SeeNa( NA.SEE, wa.i, this );
     }
 }
 
@@ -270,29 +266,24 @@ unittest
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.a_see( Game.wana, b ); // async call via wana
+    i.wana_see( b ); // async call via wana
     
     import std.stdio : writeln;
     writeln( "A_SEE: " );
 
     // go
     foreach( wn; Game.wana )
-        foreach( _a; a.v )
+        foreach( _a; A.v )
             if ( _a.able )
-            {
-                writeln( "  able: ", _a );
-                if ( wn.is_wa )
-                    _a.wa( wn.wa );
-                else
-                    _a.na( wn.na );
-            }
+                _a.wana( wn );
+
     writeln( "A_SEE: ." );
 }
 
 // Send!SeeNa( NA.SEE, wa.i, this );  // wana call
-void Send(T,ARGS...)( ARGS args )
+auto mawana(T,ARGS...)( ARGS args )
 {
-    Game.wana.ma!T( args );  // wana call
+    return Game.wana.ma!T( args );  // wana call
 }
 
 
@@ -558,23 +549,12 @@ struct Game
     void go()
     {
         foreach( wn; wana )
-            sense( wn );
-    }
-
-    void sense( WaNa* wn )
-    {
-        //import std.stdio : writeln;
-        //if (wn.is_wa) 
-        //    writeln( "wn: ", wn.wa.t );
-        //else
-        //    writeln( "wn: ", wn.na.t );
-
-        if ( wn.is_na && wn.na.t == NA.ASYNC )
-            wn.na.async.then_();
-        else
-            foreach( a; A.v )
-                if ( a.able )
-                    a.wana( wn );
+            if ( wn.is_na && wn.na.t == NA.ASYNC )
+                wn.na.async.then_();
+            else
+                foreach( a; A.v )
+                    if ( a.able )
+                        a.wana( wn );
     }
 }
 
