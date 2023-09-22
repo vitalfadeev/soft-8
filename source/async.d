@@ -117,7 +117,7 @@ void i_wa_download( string url )
 	writeln( "i_wa_download: ." );
 }
 
-Game game;
+
 void test()
 {
 	writeln( "test:" );
@@ -132,7 +132,7 @@ void test()
 	//taskPool.finish(true);
 
 	writeln( "game.go:" );
-	game.go();
+	Game().go();
 	writeln( "game.go: ." );
 	// wait for end all threads
 

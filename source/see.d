@@ -98,7 +98,7 @@ class NaAble : WaAble
     }
     auto na(T,ARGS...)( ARGS args )
     {
-        return .na!T( this, args );
+        return .na!T( args );
     }
 }
 
@@ -236,7 +236,7 @@ class BSeeAble: A, SeeAble
         see_able( wa.i );
 
         // async return
-        .na!SeeNa( wa.i, this );
+        na!SeeNa( wa.i, this );
     }
 }
 
@@ -273,16 +273,12 @@ unittest
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.wa_see( b ); // async call via wana
+    i.wa_see( b ); // wana-call via wana
     
     import std.stdio : writeln;
     writeln( "A_SEE: " );
 
-    // go
-    foreach( wn; Game.wana )
-        foreach( _a; A.v )
-            if ( _a.able )
-                _a.on_wana( wn );
+    Game().go();
 
     writeln( "A_SEE: ." );
 }
@@ -424,11 +420,6 @@ struct Wana_(T)
         _E* _next;
         T   _super;
     }
-
-    //void opAssign( string op : "~", ARGS... )( ARGS args )
-    //{
-    //    this.ma!T( args );
-    //}
 
     auto ma(SUBT,ARGS...)( ARGS args )
         // if ( SUBT inherited from T )
