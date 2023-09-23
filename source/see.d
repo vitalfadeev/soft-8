@@ -384,10 +384,10 @@ struct _V(T)
 
 
 // wa <- wana <- wa
-alias Wana = Wana_!WaNa;
+alias Wana = _Wana!WaNa;
 
 // FIFO
-struct Wana_(T)
+struct _Wana(T)
     if ( is( T == struct ))
 {
     _E* f;
@@ -428,8 +428,7 @@ struct Wana_(T)
         else
             f = f._next;
 
-
-        //for_free.destroy();
+        for_free.destroy();
     }
 
     auto save()
