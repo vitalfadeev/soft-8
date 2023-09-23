@@ -83,11 +83,11 @@ class MaAble : Able
     //A _next;
     // foreach( e; v )...
     static __gshared
-    V v;
+    V _v;
 
     auto ma(T,ARGS...)( ARGS args )
     {
-        return v.ma!T( args );
+        return _v.ma!T( args );
     }
 }
 
@@ -101,13 +101,13 @@ auto ma(T, ARGS...)( ARGS args )
 class WaAble : MaAble
 {
     static __gshared
-    Wana wana;
+    Wana _wana;
 
     static
     auto wa(T,ARGS...)( ARGS args )
         // if ( T derived from WA )
     {
-        return wana.ma!T( args );
+        return _wana.ma!T( args );
     }
 
     void on_na( Na na )
@@ -133,7 +133,7 @@ class NaAble : WaAble
     auto na(T,ARGS...)( ARGS args )
         // if ( T derived from NA )
     {
-        return wana.ma!T( args );
+        return _wana.ma!T( args );
     }
 }
 
@@ -158,6 +158,22 @@ auto na(T,ARGS...)( ARGS args )
 {
     return NaAble.na!T( args );
 }
+
+
+class Game : WaNaAble
+{
+    void go()
+    {
+        foreach( wn; _wana )
+            if ( wn.is_na && wn.na.t == NA.ASYNC )
+                wn.na.async.then_();
+            else
+                foreach( a; _v )
+                    if ( a.able )
+                        a.on_wana( wn );
+    }
+}
+
 
 
 
@@ -306,7 +322,7 @@ unittest
     import std.stdio : writeln;
     writeln( "A_SEE: " );
 
-    Game().go();
+    new Game().go();
 
     writeln( "A_SEE: ." );
 }
@@ -563,19 +579,3 @@ struct WaNa
         return ( na.t & 1 ) != 0;
     }
 }
-
-//
-struct Game
-{
-    void go()
-    {
-        foreach( wn; WaAble.wana )
-            if ( wn.is_na && wn.na.t == NA.ASYNC )
-                wn.na.async.then_();
-            else
-                foreach( a; A.v )
-                    if ( a.able )
-                        a.on_wana( wn );
-    }
-}
-

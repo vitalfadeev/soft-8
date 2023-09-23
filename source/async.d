@@ -132,7 +132,7 @@ void test()
 	//taskPool.finish(true);
 
 	writeln( "game.go:" );
-	Game().go();
+	new Game().go();
 	writeln( "game.go: ." );
 	// wait for end all threads
 
