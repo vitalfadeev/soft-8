@@ -515,14 +515,19 @@ struct Na
     }
 }
 
-alias THEN = void delegate( ArgsAsync args );
+class AsyncWaCLass
+{
+    //
+}
+
+alias THEN = void delegate( AsyncWaCLass async_wa );
 struct AsyncNa
 {
     const
-    NA        t = NA.ASYNC;
-    I         i;
-    THEN      then_;
-    ArgsAsync args;
+    NA           t = NA.ASYNC;
+    I            i;
+    THEN         then_;
+    AsyncWaCLass wa;
 }
 
 struct SeeNa
@@ -551,10 +556,4 @@ struct WaNa
     {
         return ( na.t & 1 ) != 0;
     }
-}
-
-
-class ArgsAsync
-{
-    size_t arg_count() { return 0; }
 }

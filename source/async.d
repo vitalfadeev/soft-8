@@ -72,7 +72,7 @@ class AsyncAble : I
             if ( wn.is_na )
                 switch ( wn.na.t )
                 {
-                    case NA.ASYNC: {if ( wn.na.async.i.able ) wn.na.async.then_( wn.na.async.args ); break;}
+                    case NA.ASYNC: {if ( wn.na.async.i.able ) wn.na.async.then_( wn.na.async.wa ); break;}
                     default:
                 }                
             else
@@ -84,21 +84,9 @@ class AsyncAble : I
 
 void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 {
+	auto async_wa = new AsyncWaCLass();
 	pragma( msg, "ARGS: ", ARGS );
-	class XArgsAsync : ArgsAsync
-	{
-		ARGS args;
-		//static foreach( A; ARGS )
-		//	A ;
-
-		override
-		size_t arg_count()
-		{
-			return args.length;
-		}
-	}
-	auto xargs = new XArgsAsync();
-	This.na!AsyncNa( This, then_, xargs );
+	This.na!AsyncNa( This, then_, async_wa );
 }
 
 
@@ -133,7 +121,7 @@ class DownloadI : AsyncAble
 		writeln( "async_download: ." );
 	}
 
-	void then_( ArgsAsync args )
+	void then_( AsyncWa async_wa )
 	{
 		writeln( "THEN" );
 		writeln( "  ret: ", ret );
