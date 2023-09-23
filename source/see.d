@@ -315,20 +315,6 @@ unittest
 
 
 
-//import std.container.dlist : DList;
-//struct V
-//{
-//    DList!A _super;
-//    alias _super this;
-
-//    auto ma(T,ARGS...)( ARGS args )
-//    {
-//        auto a = .ma!T( args );
-//        _super ~= a;
-//        return a;
-//    }
-//}
-
 alias V = _V!A;
 
 // SList
@@ -529,14 +515,14 @@ struct Na
     }
 }
 
-alias THEN = void delegate();
+alias THEN = void delegate( ArgsAsync args );
 struct AsyncNa
 {
     const
-    NA    t = NA.ASYNC;
-    I     i;
-    THEN  then_;
-    void* ret;
+    NA        t = NA.ASYNC;
+    I         i;
+    THEN      then_;
+    ArgsAsync args;
 }
 
 struct SeeNa
@@ -565,4 +551,10 @@ struct WaNa
     {
         return ( na.t & 1 ) != 0;
     }
+}
+
+
+class ArgsAsync
+{
+    //
 }
