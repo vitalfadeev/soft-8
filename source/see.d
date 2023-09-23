@@ -537,9 +537,10 @@ alias THEN = void delegate();
 struct AsyncNa
 {
     const
-    NA   t = NA.ASYNC;
-    I    i;
-    THEN then_;
+    NA    t = NA.ASYNC;
+    I     i;
+    THEN  then_;
+    void* ret;
 }
 
 struct SeeNa

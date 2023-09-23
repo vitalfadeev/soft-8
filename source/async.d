@@ -58,7 +58,7 @@ class AsyncAble : I
 	{
 	    writeln( "async:" );
 
-	    import std.parallelism;
+	    import std.parallelism : task;
 	    auto async_task = task!wrapped_dg( this, dg, then_, args );
 	    async_task.executeInNewThread();
 
@@ -84,8 +84,18 @@ class AsyncAble : I
 
 void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 {
-	dg( args );
-	This.na!AsyncNa( This, then_ );
+    alias ReturnType = typeof(dg(args));
+
+    static if ( !is( ReturnType == void ) )
+    {
+		ReturnType ret = dg( args );
+		This.na!AsyncNa( This, then_, ret );
+	}
+	else
+	{
+		dg( args );
+		This.na!AsyncNa( This, then_ );
+	}
 }
 
 
@@ -96,7 +106,7 @@ alias RSTRING = shared(string);
 
 class DownloadI : AsyncAble
 {
-	string download( string url, RSTRING ret )
+	string download( string url )
 	{
 		//import requests;
 		//auto content = getContent( url );
@@ -108,17 +118,18 @@ class DownloadI : AsyncAble
 		return "DONE: " ~ url;
 	}
 
-	void then_()
+	void then_( RSTRING ret )
 	{
 		writeln( "THEN" );
+		writeln( "  ret: ", ret );
 	}
 
 
-	void async_download( string url, RSTRING ret )
+	void async_download( string url )
 	{
 		writeln( "async_download:" );
 
-		async( &download, &then_, url, ret );
+		async( &download, &then_, url );
 
 		writeln( "async_download: ." );
 	}
@@ -133,14 +144,13 @@ void test()
 	auto i = a.ma!DownloadI();
 
 	string url = "https://raw.githubusercontent.com/vitalfadeev/Templates/master/win_window/source/main.d";
-	RSTRING ret;
-	i.async_download( url, ret );
+	i.async_download( url );
 
 	writeln( "DELAY" );
 	writeln( "DELAY" );
 	writeln( "DELAY" ); 
 	// wait for end all threads
-    import std.parallelism;
+    import std.parallelism : taskPool;
 	taskPool.finish(true);
 
 	writeln( "game.go:" );
