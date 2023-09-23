@@ -90,6 +90,12 @@ void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 		ARGS args;
 		//static foreach( A; ARGS )
 		//	A ;
+
+		override
+		size_t arg_count()
+		{
+			return args.length;
+		}
 	}
 	auto xargs = new XArgsAsync();
 	This.na!AsyncNa( This, then_, xargs );
@@ -129,6 +135,7 @@ class DownloadI : AsyncAble
 	{
 		writeln( "THEN" );
 		writeln( "  ret: args: ", args );
+		writeln( "    args_count: ", args.arg_count() );
 	}
 }
 

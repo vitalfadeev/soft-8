@@ -556,5 +556,5 @@ struct WaNa
 
 class ArgsAsync
 {
-    //
+    size_t arg_count() { return 0; }
 }
