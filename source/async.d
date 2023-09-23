@@ -46,7 +46,7 @@ import std.stdio;
 //   able
 //     na
 //            delegate
-//       DONE
+//       THEN
 //       FAIL
 
 import see;
@@ -84,18 +84,7 @@ class AsyncAble : I
 
 void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 {
-    alias ReturnType = typeof(dg(args));
-
-    static if ( !is( ReturnType == void ) )
-    {
-		ReturnType ret = dg( args );
-		This.na!AsyncNa( This, then_, ret );
-	}
-	else
-	{
-		dg( args );
-		This.na!AsyncNa( This, then_ );
-	}
+	This.na!AsyncNa( This, then_ );
 }
 
 
@@ -106,7 +95,7 @@ alias RSTRING = shared(string);
 
 class DownloadI : AsyncAble
 {
-	string download( string url )
+	void download( string url, RSTRING ret )
 	{
 		//import requests;
 		//auto content = getContent( url );
@@ -115,23 +104,23 @@ class DownloadI : AsyncAble
     	//writeln( data );
     	ret = "OK!";
 
-		return "DONE: " ~ url;
+		// "DONE: " ~ url;
 	}
 
 
-	void async_download( string url )
+	void async_download( string url, RSTRING ret )
 	{
 		writeln( "async_download:" );
 
-		async( &download, &then_, url );
+		async( &download, &then_, url, ret );
 
 		writeln( "async_download: ." );
 	}
 
-	void then_( RSTRING ret )
+	void then_()
 	{
 		writeln( "THEN" );
-		writeln( "  ret: ", ret );
+		writeln( "  ret: " );
 	}
 }
 
@@ -144,7 +133,9 @@ void test()
 	auto i = a.ma!DownloadI();
 
 	string url = "https://raw.githubusercontent.com/vitalfadeev/Templates/master/win_window/source/main.d";
-	i.async_download( url );
+	RSTRING ret;
+	i.async_download( url, ret );
+	// i.async( &i.download, &i.then_, url );
 
 	writeln( "DELAY" );
 	writeln( "DELAY" );

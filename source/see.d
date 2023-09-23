@@ -80,8 +80,7 @@ class Able
 
 class MaAble : Able
 {
-    //A _next;
-    // foreach( e; v )...
+    A _next;  // foreach( a; _v )...
     static __gshared
     V _v;
 
@@ -116,7 +115,7 @@ class WaAble : MaAble
     }
 }
 
-auto ma(T, ARGS...)( ARGS args )
+auto ma(T,ARGS...)( ARGS args )
     if ( is( T == struct ) )
 {
     return new T( args );
@@ -299,14 +298,12 @@ unittest
 unittest
 {
     // async
-    //Wana wana;
-
     auto a = ma!A();
 
     auto i = a.ma!ISee();
     auto b = a.ma!BSeeAble();
 
-    i.wa_see( b ); // wana-call via wana
+    i.wa_see( b );  // wana-call
     
     import std.stdio : writeln;
     writeln( "A_SEE: " );
@@ -318,24 +315,24 @@ unittest
 
 
 
-import std.container.dlist : DList;
-struct V
-{
-    DList!A _super;
-    alias _super this;
+//import std.container.dlist : DList;
+//struct V
+//{
+//    DList!A _super;
+//    alias _super this;
 
-    auto ma(T,ARGS...)( ARGS args )
-    {
-        auto a = .ma!T( args );
-        _super ~= a;
-        return a;
-    }
-}
+//    auto ma(T,ARGS...)( ARGS args )
+//    {
+//        auto a = .ma!T( args );
+//        _super ~= a;
+//        return a;
+//    }
+//}
 
-//alias V = V_!A;
+alias V = _V!A;
 
 // SList
-struct V_(T)
+struct _V(T)
     if ( is( T == class ) && __traits(hasMember,T,"_next") )
 {
     T front;
