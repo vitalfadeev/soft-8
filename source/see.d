@@ -165,8 +165,12 @@ class Game : WaNaAble
     void go()
     {
         foreach( wn; _wana )
-            if ( wn.is_na && wn.na.t == NA.ASYNC )
-                wn.na.async.then_();
+            if ( wn.is_na )
+                switch ( wn.na.t )
+                {
+                    case NA.ASYNC: wn.na.async.then_(); break;
+                    default:
+                }                
             else
                 foreach( a; _v )
                     if ( a.able )
