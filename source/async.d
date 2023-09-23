@@ -49,31 +49,7 @@ import std.stdio;
 //       DONE
 //       FAIL
 
-import std.container.dlist;
 import see;
-
-
-alias RSTRING = shared(string);
-
-class DownloadI : AsyncAble
-{
-	string download( string url, RSTRING ret )
-	{
-		//import requests;
-		//auto content = getContent( url );
-		////writeln(content.splitter('\n').count);
-		// ubyte[] data = content.data;
-    	//writeln( data );
-    	ret = "OK!";
-
-		return "DONE: " ~ url;
-	}
-
-	void then_()
-	{
-		writeln( "THEN" );
-	}
-}
 
 
 class AsyncAble : I
@@ -116,18 +92,36 @@ void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 
 
 
-void i_wa_download( string url )
+alias RSTRING = shared(string);
+
+class DownloadI : AsyncAble
 {
-	writeln( "i_wa_download:" );
+	string download( string url, RSTRING ret )
+	{
+		//import requests;
+		//auto content = getContent( url );
+		////writeln(content.splitter('\n').count);
+		// ubyte[] data = content.data;
+    	//writeln( data );
+    	ret = "OK!";
 
-    auto a = ma!A();
-	auto i = a.ma!DownloadI();
-	RSTRING ret;
+		return "DONE: " ~ url;
+	}
 
-	i.async( &i.download, &i.then_, url, ret );
-	  // .then is DownloadA.NA_ASYNC()
+	void then_()
+	{
+		writeln( "THEN" );
+	}
 
-	writeln( "i_wa_download: ." );
+
+	void async_download( string url, RSTRING ret )
+	{
+		writeln( "async_download:" );
+
+		async( &download, &then_, url, ret );
+
+		writeln( "async_download: ." );
+	}
 }
 
 
@@ -135,19 +129,24 @@ void test()
 {
 	writeln( "test:" );
 
+    auto a = ma!A();
+	auto i = a.ma!DownloadI();
+
 	string url = "https://raw.githubusercontent.com/vitalfadeev/Templates/master/win_window/source/main.d";
-	i_wa_download( url );
+	RSTRING ret;
+	i.async_download( url, ret );
 
 	writeln( "DELAY" );
 	writeln( "DELAY" );
 	writeln( "DELAY" ); 
-    //import std.parallelism;
-	//taskPool.finish(true);
+	// wait for end all threads
+    import std.parallelism;
+	taskPool.finish(true);
 
 	writeln( "game.go:" );
-	new AsyncAble().go();
+	// take ASYNC callback from wana
+	i.go();
 	writeln( "game.go: ." );
-	// wait for end all threads
 
 	writeln( "test: ." );
 }
