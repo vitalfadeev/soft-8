@@ -76,12 +76,6 @@ class DownloadI : AsyncAble
 }
 
 
-void fn()
-{
-	//
-}
-
-
 class AsyncAble : I
 {
 	void async(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
@@ -102,7 +96,7 @@ class AsyncAble : I
             if ( wn.is_na )
                 switch ( wn.na.t )
                 {
-                    case NA.ASYNC: wn.na.async.then_(); break;
+                    case NA.ASYNC: {if ( wn.na.async.i.able ) wn.na.async.then_(); break;}
                     default:
                 }                
             else
