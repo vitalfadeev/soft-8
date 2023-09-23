@@ -160,8 +160,11 @@ auto na(T,ARGS...)( ARGS args )
 }
 
 
-class Game : WaNaAble
+
+
+class A : WaNaAble
 {
+    static
     void go()
     {
         foreach( wn; _wana )
@@ -176,14 +179,6 @@ class Game : WaNaAble
                     if ( a.able )
                         a.on_wana( wn );
     }
-}
-
-
-
-
-class A : WaNaAble
-{
-    //
 }
 
 
@@ -326,7 +321,7 @@ unittest
     import std.stdio : writeln;
     writeln( "A_SEE: " );
 
-    new Game().go();
+    a.go();
 
     writeln( "A_SEE: ." );
 }
