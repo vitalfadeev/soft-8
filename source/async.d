@@ -55,7 +55,7 @@ import see;
 
 alias RSTRING = shared(string);
 
-class DownloadI : I
+class DownloadI : AsyncAble
 {
 	string download( string url, RSTRING ret )
 	{
@@ -82,24 +82,43 @@ void fn()
 }
 
 
-void async(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
+class AsyncAble : A
 {
-    import std.parallelism;
+	void async(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
+	{
+	    writeln( "async:" );
 
+	    import std.parallelism;
+	    auto async_task = task!wrapped_dg( this, dg, then_, args );
+	    async_task.executeInNewThread();
 
-    writeln( "async:" );
+	    writeln( "async: ." );
+	}
 
-    auto async_task = task!wrapped_dg( dg, then_, args );
-    async_task.executeInNewThread();
-
-    writeln( "async: ." );
+	override
+    void go()
+    {
+        foreach( wn; _wana )
+            if ( wn.is_na )
+                switch ( wn.na.t )
+                {
+                    case NA.ASYNC: wn.na.async.then_(); break;
+                    default:
+                }                
+            else
+                foreach( a; _v )
+                    if ( a.able )
+                        a.on_wana( wn );
+    }
 }
 
-void wrapped_dg(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
+void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 {
 	dg( args );
-	na!AsyncNa( then_ );
+	This.na!AsyncNa( then_ );
 }
+
+
 
 
 
@@ -111,7 +130,7 @@ void i_wa_download( string url )
 	auto i = a.ma!DownloadI();
 	RSTRING ret;
 
-	async( &i.download, &i.then_, url, ret );
+	i.async( &i.download, &i.then_, url, ret );
 	  // .then is DownloadA.NA_ASYNC()
 
 	writeln( "i_wa_download: ." );
@@ -132,7 +151,7 @@ void test()
 	//taskPool.finish(true);
 
 	writeln( "game.go:" );
-	A.go();
+	new AsyncAble().go();
 	writeln( "game.go: ." );
 	// wait for end all threads
 

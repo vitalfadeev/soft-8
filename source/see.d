@@ -147,38 +147,28 @@ class WaNaAble : NaAble
             on_na( wn.na );
     }
 
+    void go()
+    {
+        foreach( wn; _wana )
+            foreach( a; _v )
+                if ( a.able )
+                    a.on_wana( wn );
+    }
 }
 
 // Send!SeeNa( NA.SEE, wa.i, this );
-auto wa(T,ARGS...)( ARGS args )
-{
-    return WaAble.wa!T( args );
-}
-auto na(T,ARGS...)( ARGS args )
-{
-    return NaAble.na!T( args );
-}
-
-
+//auto wa(T,ARGS...)( ARGS args )
+//{
+//    return WaAble.wa!T( args );
+//}
+//auto na(T,ARGS...)( ARGS args )
+//{
+//    return NaAble.na!T( args );
+//}
 
 
 class A : WaNaAble
 {
-    static
-    void go()
-    {
-        foreach( wn; _wana )
-            if ( wn.is_na )
-                switch ( wn.na.t )
-                {
-                    case NA.ASYNC: wn.na.async.then_(); break;
-                    default:
-                }                
-            else
-                foreach( a; _v )
-                    if ( a.able )
-                        a.on_wana( wn );
-    }
 }
 
 
