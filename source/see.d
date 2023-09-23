@@ -78,16 +78,48 @@ class Able
     }
 }
 
-class WaAble : Able
+class MaAble : Able
 {
-    auto wa(T,ARGS...)( ARGS args )
+    //A _next;
+    // foreach( e; v )...
+    static __gshared
+    V v;
+
+    auto ma(T,ARGS...)( ARGS args )
     {
-        return .wa!T( args );
+        return v.ma!T( args );
     }
+}
+
+auto ma(T, ARGS...)( ARGS args )
+    if ( is( T == class ) )
+{
+    return new T( args );
+}
+
+
+class WaAble : MaAble
+{
+    static __gshared
+    Wana wana;
+
+    static
+    auto wa(T,ARGS...)( ARGS args )
+        // if ( T derived from WA )
+    {
+        return wana.ma!T( args );
+    }
+
     void on_na( Na na )
     {
         //
     }
+}
+
+auto ma(T, ARGS...)( ARGS args )
+    if ( is( T == struct ) )
+{
+    return new T( args );
 }
 
 class NaAble : WaAble
@@ -96,9 +128,12 @@ class NaAble : WaAble
     {
         //
     }
+
+    static
     auto na(T,ARGS...)( ARGS args )
+        // if ( T derived from NA )
     {
-        return .na!T( args );
+        return wana.ma!T( args );
     }
 }
 
@@ -114,28 +149,21 @@ class WaNaAble : NaAble
 
 }
 
-auto ma(T, ARGS...)( ARGS args )
-    if ( is( T == class ) )
+// Send!SeeNa( NA.SEE, wa.i, this );
+auto wa(T,ARGS...)( ARGS args )
 {
-    return new T( args );
+    return WaAble.wa!T( args );
 }
-auto ma(T, ARGS...)( ARGS args )
-    if ( is( T == struct ) )
+auto na(T,ARGS...)( ARGS args )
 {
-    return new T( args );
+    return NaAble.na!T( args );
 }
+
 
 
 class A : WaNaAble
 {
-    //A _next;
-    static __gshared
-    V v;
-
-    auto ma(T,ARGS...)( ARGS args )
-    {
-        return v.ma!T( args );
-    }
+    //
 }
 
 
@@ -282,14 +310,6 @@ unittest
 
     writeln( "A_SEE: ." );
 }
-
-// Send!SeeNa( NA.SEE, wa.i, this );  // wana call
-auto mawana(T,ARGS...)( ARGS args )
-{
-    return Game.wana.ma!T( args );  // wana call
-}
-alias wa = mawana;
-alias na = mawana;
 
 
 
@@ -547,12 +567,9 @@ struct WaNa
 //
 struct Game
 {
-    static __gshared
-    Wana wana;
-
     void go()
     {
-        foreach( wn; wana )
+        foreach( wn; WaAble.wana )
             if ( wn.is_na && wn.na.t == NA.ASYNC )
                 wn.na.async.then_();
             else
