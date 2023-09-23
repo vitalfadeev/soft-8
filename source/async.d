@@ -109,6 +109,8 @@ alias RSTRING = shared(string);
 
 class DownloadI : AsyncAble
 {
+	RSTRING ret;
+
 	void download( string url, RSTRING ret )
 	{
 		//import requests;
@@ -122,7 +124,7 @@ class DownloadI : AsyncAble
 	}
 
 
-	void async_download( string url, RSTRING ret )
+	void async_download( string url )
 	{
 		writeln( "async_download:" );
 
@@ -134,8 +136,10 @@ class DownloadI : AsyncAble
 	void then_( ArgsAsync args )
 	{
 		writeln( "THEN" );
-		writeln( "  ret: args: ", args );
-		writeln( "    args_count: ", args.arg_count() );
+		writeln( "  ret: ", ret );
+		//writeln( "  ret: args: ", args );
+		//writeln( "    args_count: ", args.arg_count() );
+		//writeln( "    arg2: ", args.args[1] );
 	}
 }
 
@@ -148,8 +152,7 @@ void test()
 	auto i = a.ma!DownloadI();
 
 	string url = "https://raw.githubusercontent.com/vitalfadeev/Templates/master/win_window/source/main.d";
-	RSTRING ret;
-	i.async_download( url, ret );
+	i.async_download( url );
 	// i.async( &i.download, &i.then_, url );
 
 	writeln( "DELAY" );
