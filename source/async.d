@@ -111,7 +111,7 @@ class DownloadI : AsyncAble
 {
 	RSTRING ret;
 
-	void download( string url, RSTRING ret )
+	void download( string url )
 	{
 		//import requests;
 		//auto content = getContent( url );
@@ -128,7 +128,7 @@ class DownloadI : AsyncAble
 	{
 		writeln( "async_download:" );
 
-		async( &download, &then_, url, ret );
+		async( &download, &then_, url );
 
 		writeln( "async_download: ." );
 	}
