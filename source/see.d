@@ -538,6 +538,7 @@ struct AsyncNa
 {
     const
     NA   t = NA.ASYNC;
+    I    i;
     THEN then_;
 }
 

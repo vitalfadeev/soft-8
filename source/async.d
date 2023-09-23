@@ -82,7 +82,7 @@ void fn()
 }
 
 
-class AsyncAble : A
+class AsyncAble : I
 {
 	void async(DG,THEN,ARGS...)( DG dg, THEN then_, ARGS args )
 	{
@@ -115,7 +115,7 @@ class AsyncAble : A
 void wrapped_dg(THIS,DG,THEN,ARGS...)( THIS This, DG dg, THEN then_, ARGS args )
 {
 	dg( args );
-	This.na!AsyncNa( then_ );
+	This.na!AsyncNa( This, then_ );
 }
 
 
