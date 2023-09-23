@@ -118,12 +118,6 @@ class DownloadI : AsyncAble
 		return "DONE: " ~ url;
 	}
 
-	void then_( RSTRING ret )
-	{
-		writeln( "THEN" );
-		writeln( "  ret: ", ret );
-	}
-
 
 	void async_download( string url )
 	{
@@ -132,6 +126,12 @@ class DownloadI : AsyncAble
 		async( &download, &then_, url );
 
 		writeln( "async_download: ." );
+	}
+
+	void then_( RSTRING ret )
+	{
+		writeln( "THEN" );
+		writeln( "  ret: ", ret );
 	}
 }
 
