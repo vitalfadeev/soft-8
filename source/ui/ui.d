@@ -61,12 +61,19 @@ module ui.ui;
 //   1 to 3 via 2 soft
 //
 // a
-// ga
+// la
+// laa
 //
-// a( xy )             // point
-// ga( xy )            // line
-// ga( xy, xy2 )       // soft line via xy to xy2
-// ga( xy, xy2, xy3 )  // soft soft line via xy via xy2 to xy3
+// la( xy )              // point
+// la( xy[] )            // points
+// laa( xy )             // line
+// laa( xy, xy2 )        // line
+// laa( xy[] )           // lines
+// laa( xy, xy[] )       // lines
+// laam( xy, xy2 )       // soft soft line via xy to xy2
+// laam( xy, xy2, xy3 )  // soft soft line via xy via xy2 to xy3
+// laam( xy[] )          // soft soft line via xy[]
+// laam( xy, xy[] )      // soft soft line via xy[]
 //
 // la
 // la xy
@@ -77,10 +84,10 @@ module ui.ui;
 // la( xy )               // point  xy
 // la( xy[] )             // points xy[] = ( xy.length, xy.ptr )
 
-// GO LIGHT
-// la( xy, _xy )        // line  xy to _xy
-// la( xy, _xy, __xy )  // line  xy to _xy to __xy
-// la( xy[] )           // lines xy[] = ( xy.length, xy.ptr )
+// LIGHT
+// laa( xy, _xy )        // line  xy to _xy
+// laa( xy, _xy, __xy )  // line  xy to _xy to __xy
+// laa( xy[] )           // lines xy[] = struct( length, ptr )
 
 // SOUND
 // sa()

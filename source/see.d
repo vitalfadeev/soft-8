@@ -304,6 +304,26 @@ unittest
     auto b = a.ma!BSeeAble();
 
     i.wa_see( b );  // wana-call
+                    // b.see( i )
+    
+    import std.stdio : writeln;
+    writeln( "A_SEE: " );
+
+    a.go();
+
+    writeln( "A_SEE: ." );
+}
+
+unittest
+{
+    // async
+    auto a = ma!A();
+
+    auto window = a.ma!ISee();
+    auto b = a.ma!BSeeAble();
+
+    window.wa_see( b );  // wana-call
+                         // b.see( window )
     
     import std.stdio : writeln;
     writeln( "A_SEE: " );
@@ -520,14 +540,14 @@ class AsyncWaCLass
     //
 }
 
-alias THEN = void delegate( AsyncWaCLass async_wa );
+alias THEN = void delegate( /*AsyncWaCLass async_wa*/ );
 struct AsyncNa
 {
     const
     NA           t = NA.ASYNC;
     I            i;
     THEN         then_;
-    AsyncWaCLass wa;
+    /*AsyncWaCLass wa;*/
 }
 
 struct SeeNa

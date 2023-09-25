@@ -25,7 +25,7 @@ struct Cola32
         {
             // The Intel x86 CPUs are little endian meaning 
             // that the value 
-            // 0x0A0B0C0D 
+            // 0x0A_0B_0C_0D 
             // is stored in memory as
             // 0D 0C 0B 0A.
             LA a;
@@ -34,35 +34,85 @@ struct Cola32
             LA r;
         }
     }
+
+    enum RMASK = 0x000000FF;
+    enum GMASK = 0x0000FF00;
+    enum BMASK = 0x00FF0000;
+    enum AMASK = 0xFF000000;
+}
+
+version(SDL)
+import bindbc.sdl;
+
+version(SDL)
+struct XYcola
+{   // rasterizer
+    SDL_Surface* _super;
+    alias _super this;
+
+    alias T = typeof(this);
+
+    static
+    XYcola ma( XY _xy )
+    {
+        return 
+            T(
+                SDL_CreateRGBSurface(
+                    0,
+                    _xy.x, _xy.y,
+                    Cola.sizeof * 8,
+                    Cola.RMASK,
+                    Cola.GMASK,
+                    Cola.BMASK,
+                    Cola.AMASK,
+                )
+            );
+    }
+
+    void opAssign( Cola b )
+    {
+        // overloads a = b
+
+        SDL_Rect rect;
+        rect.x = 0;
+        rect.y = 0;
+        rect.w = _super.w;
+        rect.h = _super.h;
+        SDL_FillRect( _super, &rect, b.m32 );
+    }
+
+    Cola opIndexAssign( Cola b )  
+    {
+        // overloads a[] = b
+
+        SDL_Rect rect;
+        rect.x = 0;
+        rect.y = 0;
+        rect.w = _super.w;
+        rect.h = _super.h;
+        SDL_FillRect( _super, &rect, b.m32 );
+
+        return b;
+    }
+
+
+    Cola opIndexAssign( Cola b, XY xy )
+    {
+        // overloads a[xy] = b
+        size_t i = xy.y * _super.pitch + xy.x;
+        ( cast(Cola*)( _super.pixels ) )[i] = b;
+
+        return b;
+    }
 }
 
 
-struct Map(alias T, M16 X, M16 Y)
+void la( ref XYcola xycola, XY xy, Cola cola )
 {
-    T[X][Y] _map;
-    alias _map this;
-
-    alias x_size = X;
-    alias y_size = Y;
-    alias t      = T;
+    xycola[xy] = cola;
 }
 
 
-struct ColaMap(size_t X, size_t Y)
-{
-    ColaMap!(Cola,X,Y) _map;
-    alias _map this;
-}
-struct ColaMap(alias T, size_t X, size_t Y)
-{
-    Map!(T,X,Y) _map;
-    alias _map this;
-}
-
-unittest
-{
-    auto map = new ColaMap!(Cola, 1366, 768);
-}
 
 
 class Laer
@@ -97,14 +147,6 @@ class Laer
     }
 }
 
-unittest
-{
-    auto map = new ColaMap!(Cola, 640, 480);
-    auto laer = new Laer( map );
-    laer.La( XY(0,0), Cola( 255, 255, 255, 255 ) );
-    //laer.ToXPM();
-}
-
 //class SDLLaer : Laer
 //{
 //    //
@@ -112,23 +154,39 @@ unittest
 
 // Laer
 //   la
-//   lai
-//   hla
-//   polyla
+//   laa
+//   laas
 //   round
 //   quad
 //   roundedQuad
 //
 // Rasterizer
 //   la
-//   hla
-//   polyla
+//   laa
+//   laas
 //   ola
 //   qla
-//   oQla
+//   oqla
 //
 // Laer
 //   la( type.la, data )
+
+// G pipeline
+//   points, paths
+//     add operations, points  // la[], laa[], laam[]
+//     zoom
+//     rotate
+//     brash                   // new lines, remove control line
+//     ...detalization         // 1 la -> 2 la
+//     crop                    // 
+//   rasterize
+//     ox -> px
+//     cola                    // 
+//     mix bg fg               //
+//     pixels                  //
+
+// lawana
+
 
 struct Op
 {
@@ -136,7 +194,7 @@ struct Op
     {
         Opcode opcode;
         La     la;
-        Lai    lai;
+        Laa    laa;
         Ola    ola;
     }
 
@@ -157,9 +215,9 @@ struct Op
         }
     }
 
-    struct Lai
+    struct Laa
     {
-        Opcode opcode = Opcode.LAI;
+        Opcode opcode = Opcode.LAA;
         //Loc loc;
         //L   l;
     }
@@ -176,7 +234,7 @@ enum Opcode
 {
     _,
     LA,
-    LAI,
+    LAA,
     OLA,
 }
 
@@ -250,7 +308,7 @@ struct Rasterizer
             switch ( op.opcode )
             {
                 case Opcode.LA:  { Rasterize_La( op.la ); break; }
-                case Opcode.LAI: { break; }
+                case Opcode.LAA: { break; }
                 case Opcode.OLA: { break; }
                 case Opcode._:   { break; }
             }
