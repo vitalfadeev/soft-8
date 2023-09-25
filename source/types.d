@@ -80,7 +80,24 @@ struct XY
 
         return CS( C(c), S(s) );
     }
+
+    C to(C)()
+    {
+        return x / y;
+    }
+
+    XY opBinary(string op:"+")( XY b )
+    {
+        return XY( X(x + b.x), Y(y + b.y) );
+    }
+
+    XY opBinary(string op:"-")( XY b )
+    {
+        return XY( X(x - b.x), Y(y - b.y) );
+    }
 }
+
+alias A = size_t;
 
 unittest
 {
@@ -97,7 +114,7 @@ unittest
 struct C
 {
     //Fixed_16_16 a;
-    M16 a;
+    M16 a;  // 1/65536 part of round
     alias a this;
 
     this( M32 a )
@@ -128,6 +145,13 @@ struct X
     {
         this.a = cast(M16)a;
     }
+
+    C opBinary(string op : "/")( Y y )
+    {
+        // C = X / Y
+        return C( a / y );
+    }
+
 }
 
 struct Y
