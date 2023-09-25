@@ -180,9 +180,34 @@ void X_laa( ref XYcola xycola, XY a, XY b,  Cola cola )
     // a
     if ( a.x < b.x && a.y < b.y )
     {
+        // 0..1
+        if (1) 
+            for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
+                *cola_ptr = cola;                      // STOSD
+            // if 1..5
+            //   mov [ptr], cola
+            //   mov [ptr], cola
+            //   mov [ptr], cola
+            //   mov [ptr], cola
+            //   mov [ptr], cola
+            // if 16 | 32 bytes
+            //   MOVDQA [RCX],XMM0
+            // else
+            //   core.stdc.string
+            //   void* memset(return scope void* s, int c, size_t n);
+            //   cola_ptr = memset( cola_ptr, cola, n );  
+            //     call..ret overhead
+
+        // 1..2..3
         for ( auto ecy=b.y; ecy; ecy--, cola_ptr+=w )  // DEC ; JZ
             for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
                 *cola_ptr = cola;                      // STOSD
+
+        // 3..4
+        if (1)
+            for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
+                *cola_ptr = cola;                      // STOSD
+            
     }
     else
 
