@@ -150,16 +150,16 @@ void I_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
 }
 void X_laa( ref XYcola xycola, XY a, XY b,  Cola cola )
 {
-    //                                                       // _y - y = 1
+    // 0                       1                        2    // _y - y = 1
     // #########################                             // 0
     //                          #########################    // 1
     //
-    //                                                       // _y - y = 2
+    // 0               1                2               3_   // _y - y = 2
     // #################                                     // 0
     //                  #################                    // 1
     //                                   #################   // 2
     //
-    //                                                       // _y - y = 3
+    // 0          1            2            3           4    // _y - y = 3
     // ############                                          // 0
     //             #############                             // 1
     //                          #############                // 2
@@ -167,45 +167,56 @@ void X_laa( ref XYcola xycola, XY a, XY b,  Cola cola )
     // |<-------->|
     //      nx      = ( _x - x ) / ( _y - y )
     //
-    Cola* cola_ptr = cast(Cola*)xycola.pixels;               // EDI
-    cola_ptr += a.y * xycola.pitch + a.x;
+    auto w = xycola.w;
+    Cola* cola_ptr = cast(Cola*)xycola.pixels;         // EDI
+    cola_ptr += a.y * w + a.x;
 
     auto dx = ( b.x - a.x );
     auto dy = ( b.y - a.y );
-    auto nx = dx / dy;                       // IDIV
+    auto nx = dx / dy;                                 // IDIV
 
     //   b
     //  /
     // a
     if ( a.x < b.x && a.y < b.y )
-        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
-            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
-                *cola_ptr = cola;            // STOSD
+    {
+        for ( auto ecy=b.y; ecy; ecy--, cola_ptr+=w )  // DEC ; JZ
+            for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
+                *cola_ptr = cola;                      // STOSD
+    }
+    else
+
     // a
     //  \
     //   b
-    else
     if ( a.x < b.x && a.y > b.y )
+    {
         for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
             for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
                 *cola_ptr = cola;            // STOSD
+    }
+    else
 
     //   a
     //  /
     // b
-    else
     if ( a.x > b.x && a.y > b.y )
+    {
         for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
             for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
                 *cola_ptr = cola;            // STOSD
+    }
+    else
+
     // b
     //  \
     //   a
-    else
     if ( a.x > b.x && a.y < b.y )
+    {
         for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
             for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
                 *cola_ptr = cola;            // STOSD
+    }
 
 }
 
