@@ -154,14 +154,30 @@ void X_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
     auto c = (_xy - xy).to!C;                               // cos
 
     auto x  = xy.x;
+    auto y  = xy.y;
     auto _x = _xy.x;
-    auto y  = x / c;
+    auto _y = _xy.y;
 
-    while ( x < _x )
+    if ( y < _y )           // /
+    while ( y < _y )
     {
         *cola_ptr = cola;
 
         x++;
+
+        if ( y*c != x )
+            y++;
+    }
+    else
+    if ( y > _y )           // \
+    while ( y > _y )
+    {
+        *cola_ptr = cola;
+
+        x++;
+
+        if ( y*c != x )
+            y--;
     }
 
 }
