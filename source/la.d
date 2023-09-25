@@ -123,6 +123,9 @@ void laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
     if ( xy.x == _xy.x )                 // |
         I_laa( xycola, xy, _xy, cola );
     else
+    if ( ABS(_x - x) == ABS(_y - y) ) 
+        X_laa( xycola, xy, _xy, cola );  // 45 degress /
+    else
         X_laa( xycola, xy, _xy, cola );  // /
 }
 
@@ -132,7 +135,7 @@ void H_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
     Cola* cola_ptr = cast(Cola*)xycola.pixels;               // EDI
     cola_ptr += xy.y * xycola.pitch + xy.x;
 
-    for ( auto CX=_xy.x - xy.x; CX !=0; CX--, cola_ptr++ )  // STOSD
+    for ( auto CX=_xy.x - xy.x; CX; CX--, cola_ptr++ )  // STOSD
         *cola_ptr = cola;
 }
 void I_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
@@ -142,46 +145,78 @@ void I_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
     cola_ptr += xy.y * xycola.pitch + xy.x;
     auto pitch = xycola.pitch;
 
-    for ( auto CX=_xy.y - xy.y; CX !=0; CX--, cola_ptr+=pitch )
+    for ( auto CX=_xy.y - xy.y; CX; CX--, cola_ptr+=pitch )
         *cola_ptr = cola;
 }
-void X_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+void X_laa( ref XYcola xycola, XY a, XY b,  Cola cola )
 {
-    // /
+    //                                                       // _y - y = 1
+    // #########################                             // 0
+    //                          #########################    // 1
+    //
+    //                                                       // _y - y = 2
+    // #################                                     // 0
+    //                  #################                    // 1
+    //                                   #################   // 2
+    //
+    //                                                       // _y - y = 3
+    // ############                                          // 0
+    //             #############                             // 1
+    //                          #############                // 2
+    //                                       ############    // 3
+    // |<-------->|
+    //      nx      = ( _x - x ) / ( _y - y )
+    //
     Cola* cola_ptr = cast(Cola*)xycola.pixels;               // EDI
-    cola_ptr += xy.y * xycola.pitch + xy.x;
+    cola_ptr += a.y * xycola.pitch + a.x;
 
-    auto c = (_xy - xy).to!C;                               // cos
+    auto dx = ( b.x - a.x );
+    auto dy = ( b.y - a.y );
+    auto nx = dx / dy;                       // IDIV
 
-    auto x  = xy.x;
-    auto y  = xy.y;
-    auto _x = _xy.x;
-    auto _y = _xy.y;
-
-    if ( y < _y )           // /
-    while ( y < _y )
-    {
-        *cola_ptr = cola;
-
-        x++;
-
-        if ( y*c != x )
-            y++;
-    }
+    //   b
+    //  /
+    // a
+    if ( a.x < b.x && a.y < b.y )
+        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
+            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
+                *cola_ptr = cola;            // STOSD
+    // a
+    //  \
+    //   b
     else
-    if ( y > _y )           // \
-    while ( y > _y )
-    {
-        *cola_ptr = cola;
+    if ( a.x < b.x && a.y > b.y )
+        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
+            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
+                *cola_ptr = cola;            // STOSD
 
-        x++;
-
-        if ( y*c != x )
-            y--;
-    }
+    //   a
+    //  /
+    // b
+    else
+    if ( a.x > b.x && a.y > b.y )
+        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
+            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
+                *cola_ptr = cola;            // STOSD
+    // b
+    //  \
+    //   a
+    else
+    if ( a.x > b.x && a.y < b.y )
+        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
+            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
+                *cola_ptr = cola;            // STOSD
 
 }
 
+
+auto ABS(T)(T a)
+{
+    return 
+        ( a < 0) ? 
+            (-a):
+            ( a);
+}
 
 
 class Laer
