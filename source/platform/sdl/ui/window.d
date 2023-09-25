@@ -1,4 +1,4 @@
-module platform.sdl.ui.wubdiw;
+module platform.sdl.ui.window;
 
 version(SDL):
 import bindbc.sdl;

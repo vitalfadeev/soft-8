@@ -123,7 +123,7 @@ void laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
     if ( xy.x == _xy.x )                 // |
         I_laa( xycola, xy, _xy, cola );
     else
-    if ( ABS(_x - x) == ABS(_y - y) ) 
+    if ( ABS(_xy.x - xy.x) == ABS(_xy.y - xy.y) ) 
         X_laa( xycola, xy, _xy, cola );  // 45 degress /
     else
         X_laa( xycola, xy, _xy, cola );  // /
