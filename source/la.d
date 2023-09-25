@@ -112,6 +112,33 @@ void la( ref XYcola xycola, XY xy, Cola cola )
     xycola[xy] = cola;
 }
 
+void laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+{
+    if ( xy.y == _xy.y )  // -
+        H_laa( xycola, xy, _xy, cola );
+    else
+    if ( xy.x == _xy.x )  // |
+        I_laa( xycola, xy, _xy, cola );
+    else
+        X_laa( xycola, xy, _xy, cola );
+}
+
+void H_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+{
+    Cola cola_ptr = cast(Cola*)xycola.pixels;               // EDI
+    cola_ptr += xy.y * _super.pitch + xy.x;
+
+    for ( auto CX=_xy.x - xy.x; CX !=0; CX--, cola_ptr++ )  // STOSD
+        *cola_ptr = cola;
+}
+void I_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+{
+    //
+}
+void X_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+{
+    //
+}
 
 
 
