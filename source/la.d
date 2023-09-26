@@ -45,7 +45,7 @@ version(SDL)
 import bindbc.sdl;
 
 version(SDL)
-struct XYcola
+struct UCcola
 {   // rasterizer
     SDL_Surface* _super;
     alias _super this;
@@ -53,13 +53,13 @@ struct XYcola
     alias T = typeof(this);
 
     static
-    XYcola ma( XY _xy )
+    UCcola ma( EA _ea )
     {
         return 
             T(
                 SDL_CreateRGBSurface(
                     0,
-                    _xy.x, _xy.y,
+                    _ea.u, _ea.c,
                     Cola.sizeof * 8,
                     Cola.RMASK,
                     Cola.GMASK,
@@ -69,121 +69,196 @@ struct XYcola
             );
     }
 
-    void opAssign( Cola b )
+    void opAssign( Cola cola )
     {
-        // overloads a = b
+        // overloads a = cola
 
         SDL_Rect rect;
         rect.x = 0;
         rect.y = 0;
         rect.w = _super.w;
         rect.h = _super.h;
-        SDL_FillRect( _super, &rect, b.m32 );
+        SDL_FillRect( _super, &rect, cola.m32 );
     }
 
-    Cola opIndexAssign( Cola b )  
+    Cola opIndexAssign( Cola cola )  
     {
-        // overloads a[] = b
+        // overloads a[] = cola
 
         SDL_Rect rect;
         rect.x = 0;
         rect.y = 0;
         rect.w = _super.w;
         rect.h = _super.h;
-        SDL_FillRect( _super, &rect, b.m32 );
+        SDL_FillRect( _super, &rect, cola.m32 );
 
-        return b;
+        return cola;
     }
 
 
-    Cola opIndexAssign( Cola b, XY xy )
+    Cola opIndexAssign( Cola cola, EA e )
     {
-        // overloads a[xy] = b
-        size_t i = xy.y * _super.pitch + xy.x;
-        ( cast(Cola*)( _super.pixels ) )[i] = b;
+        // overloads a[e] = cola
+        size_t i = e.c * _super.pitch + e.u;
+        ( cast(Cola*)( _super.pixels ) )[i] = cola;
 
-        return b;
+        return cola;
     }
 }
 
 
-void la( ref XYcola xycola, XY xy, Cola cola )
+void la( ref UCcola uccola, EA e, Cola cola )
 {
-    xycola[xy] = cola;
+    uccola[e] = cola;
 }
 
-void laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+void laa( ref UCcola uccola, EA e, EA _e,  Cola cola )
 {
-    if ( xy == _xy )
+    if ( e == _e )
         {}
     else
-    if ( xy.y == _xy.y )                 // -
-        H_laa( xycola, xy, _xy, cola );
+    if ( e.c == _e.c )                 // -
+        U_laa( uccola, e, _e, cola );
     else
-    if ( xy.x == _xy.x )                 // |
-        I_laa( xycola, xy, _xy, cola );
+    if ( e.u == _e.u )                 // |
+        C_laa( uccola, e, _e, cola );
     else
-    if ( ABS(_xy.x - xy.x) == ABS(_xy.y - xy.y) ) 
-        X_laa( xycola, xy, _xy, cola );  // 45 degress /
+    if ( ABS(_e.u - e.u) == ABS(_e.c - e.c) ) 
+        X_laa( uccola, e, _e, cola );  // 45 degress /
     else
-        X_laa( xycola, xy, _xy, cola );  // /
+        X_laa( uccola, e, _e, cola );  // /
 }
 
-void H_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+void U_laa( ref UCcola uccola, EA e, EA _e,  Cola cola )
 {
     // -
-    Cola* cola_ptr = cast(Cola*)xycola.pixels;               // EDI
-    cola_ptr += xy.y * xycola.pitch + xy.x;
+    Cola* cola_ptr = cast(Cola*)uccola.pixels;               // EDI
+    cola_ptr += e.c * uccola.pitch + ea.u;
 
-    for ( auto CX=_xy.x - xy.x; CX; CX--, cola_ptr++ )  // STOSD
+    for ( auto CX=_e.u - e.u; CX; CX--, cola_ptr++ )         // STOSD
         *cola_ptr = cola;
 }
-void I_laa( ref XYcola xycola, XY xy, XY _xy,  Cola cola )
+void C_laa( ref UCcola uccola, EA e, EA _e,  Cola cola )
 {
     // |
-    Cola* cola_ptr = cast(Cola*)xycola.pixels;               // EDI
-    cola_ptr += xy.y * xycola.pitch + xy.x;
-    auto pitch = xycola.pitch;
+    Cola* cola_ptr = cast(Cola*)uccola.pixels;               // EDI
+    cola_ptr += e.c * uccola.pitch + e.u;
+    auto pitch = uccola.pitch;
 
-    for ( auto CX=_xy.y - xy.y; CX; CX--, cola_ptr+=pitch )
+    for ( auto CX=_e.c - e.c; CX; CX--, cola_ptr+=pitch )
         *cola_ptr = cola;
 }
-void X_laa( ref XYcola xycola, XY a, XY b,  Cola cola )
+void X_laa( ref uccola uccola, EA e, EA _e, Cola cola )
 {
+    //                                                          c
     // 0                       1                        2    // _y - y = 1
     // #########################                             // 0
     //                          #########################    // 1
     //
+    //
     // 0               1                2               3_   // _y - y = 2
     // #################                                     // 0
     //                  #################                    // 1
-    //                                   #################   // 2
+    //                                   ################    // 2
+    //
+    // 0      1                2                3       4    // _y - y = 2
+    // ########                                              // 2_
+    //         #################                             // 0
+    //                          #################            // 1
+    //                                           ########    // _2
+    //
     //
     // 0          1            2            3           4    // _y - y = 3
     // ############                                          // 0
     //             #############                             // 1
     //                          #############                // 2
     //                                       ############    // 3
+    //                                                          c
     // |<-------->|
-    //      nx      = ( _x - x ) / ( _y - y )
+    //      eu      = ( _x - x ) / ( _y - y )
     //
-    auto w = xycola.w;
-    Cola* cola_ptr = cast(Cola*)xycola.pixels;         // EDI
-    cola_ptr += a.y * w + a.x;
+    auto w = uccola.w;
+    Cola* cola_ptr = 
+        ( cast(Cola*)uccola.pixels ) + e.c * w + e.u;
 
-    auto dx = ( b.x - a.x );
-    auto dy = ( b.y - a.y );
-    auto nx = dx / dy;                                 // IDIV
+    auto u  = ( _e.u - e.u );
+    auto c  = ( _e.c - e.c );
 
-    //   b
-    //  /
-    // a
-    if ( a.x < b.x && a.y < b.y )
+    if ( u > c )  //  0..45 degress
+        {}
+    else          // 45..90 degress
+        swap( u, c );
+
+    auto eu = u / c;
+    auto _  = u % c;
+
+    if ( _ == 0 )
+    {
+        auto u1  = eu;
+        auto u2  = eu;
+        auto u2n = c;
+        auto u3  = eu;
+    }
+    else
+    {        
+        auto u1  = _ / 2;
+        auto _   = _ % 2;
+        auto u2  = eu;
+        auto u2n = c;
+        auto u3  = u1 - _;
+    }
+
+
+    // -,-   |   +,-
+    //       |     
+    // ------+-----> u
+    //       |      
+    // -,+   v   +,+
+    //       c
+
+    auto dc = _e.c - e.c;
+    auto du = _e.u - e.u;
+
+    // ↙↘
+    if ( dc > 0 )
+    {
+        // ↘
+        if ( du > 0 )
+        {
+            template_inst( cola_ptr, u1, u2, u2n, u3, "+", "+" );
+        }
+        else
+        // ↙
+        {
+            template_inst( cola_ptr, u1, u2, u2n, u3, "-", "+" );
+        }
+    }
+    else
+    // ↖↗
+    {
+        // ↗
+        if ( du > 0 )
+        {
+            template_inst( cola_ptr, u1, u2, u2n, u3, "+", "-" );
+        }
+        else
+        // ↖
+        {
+            template_inst( cola_ptr, u1, u2, u2n, u3, "-", "-" );
+        }
+    }
+
+
+    // ↘
+    template template_inst( alias u1, alias u2, alias u2n, alias u3, string cola_ptr_u_op, string cola_ptr_c_op )
+        if ( ( us == "+" || us == "-" ) &&
+             ( cs == "+" || cs == "-" ) )
     {
         // 0..1
-        if (1) 
-            for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
-                *cola_ptr = cola;                      // STOSD
+        if (u1) 
+            for ( auto ecx=u1; ecx; ecx--, mixin("cola_ptr"~us~us) )
+                *cola_ptr = cola;
+
             // if 1..5
             //   mov [ptr], cola
             //   mov [ptr], cola
@@ -199,50 +274,17 @@ void X_laa( ref XYcola xycola, XY a, XY b,  Cola cola )
             //     call..ret overhead
 
         // 1..2..3
-        for ( auto ecy=b.y; ecy; ecy--, cola_ptr+=w )  // DEC ; JZ
-            for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
-                *cola_ptr = cola;                      // STOSD
+        if (u2) 
+            for ( auto ecy=u2n; ecy; ecy--, mixin("cola_ptr"~cs~"=w") )  // +=w | -=w
+                for ( auto ecx=u2; ecx; ecx--, mixin("cola_ptr"~us~us) )
+                    *cola_ptr = cola;
 
         // 3..4
-        if (1)
-            for ( auto ecx=nx; ecx; ecx-- )            // REPNZ
-                *cola_ptr = cola;                      // STOSD
+        if (u3) 
+            for ( auto ecx=u3; ecx; ecx--, mixin("cola_ptr"~us~us) )
+                *cola_ptr = cola;
             
     }
-    else
-
-    // a
-    //  \
-    //   b
-    if ( a.x < b.x && a.y > b.y )
-    {
-        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
-            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
-                *cola_ptr = cola;            // STOSD
-    }
-    else
-
-    //   a
-    //  /
-    // b
-    if ( a.x > b.x && a.y > b.y )
-    {
-        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
-            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
-                *cola_ptr = cola;            // STOSD
-    }
-    else
-
-    // b
-    //  \
-    //   a
-    if ( a.x > b.x && a.y < b.y )
-    {
-        for ( auto ecy=b.y; ecy; ecy-- )     // DEC ; JZ
-            for ( auto ecx=nx; ecx; ecx-- )  // REPNZ
-                *cola_ptr = cola;            // STOSD
-    }
-
 }
 
 
@@ -275,9 +317,9 @@ class Laer
 
 
     //void La( Loc loc, Cola cola )
-    void La( XY xy, Cola cola )
+    void La( EA ea, Cola cola )
     {
-        opstore ~= cast( Op* )( new Op.La( xy, cola ) );
+        opstore ~= cast( Op* )( new Op.La( ea, cola ) );
     }
 
 
@@ -345,12 +387,12 @@ struct Op
     {
         Opcode opcode = Opcode.LA;
         //Loc loc;
-        XY   xy;
+        EA   ea;
         Cola cola;
 
-        this( XY xy, Cola cola )
+        this( EA ea, Cola cola )
         {
-            this.xy = xy;
+            this.ea = ea;
             this.cola = cola;
         }
     }
@@ -462,16 +504,16 @@ struct Rasterizer
     void Rasterize_La( Op.La la )
     {
         // La
-        //auto xy = loc.ToXY();
-        auto xy = la.xy;
-        writeln( xy.x );
-        writeln( xy.y );
+        //auto ea = loc.ToEA();
+        auto ea = la.ea;
+        writeln( ea.x );
+        writeln( ea.y );
         writeln( laer.x_size );
         writeln( laer.y_size );
         writeln( laer.cola_size );
-        //( cast(  COLA** )map )[xy.y][xy.x] = cola;
+        //( cast(  COLA** )map )[ea.y][ea.x] = cola;
         M8* m = cast(  M8* )( laer.map );
-        auto p = m + (xy.y * laer.x_size + xy.x) * laer.cola_size;
+        auto p = m + (ea.y * laer.x_size + ea.x) * laer.cola_size;
         *p = 0;
         Cola* p_cola = cast( Cola* )p;
         *p_cola = la.cola;

@@ -56,6 +56,9 @@ unittest
     writeln( xy );
 }
 
+// struct XY     
+// struct UC
+// struct ↦↥
 struct XY
 {
     X x;
@@ -187,44 +190,44 @@ struct Renderer
         la( center );
     }
 
-    void la( PX px )
+    void la( EA ea )
     {
-        SDL_RenderDrawPoint( renderer, px.x, px.y );
+        SDL_RenderDrawPoint( renderer, ea.x, ea.y );
     }
 
-    void la( OX ox )
+    void la( EO eo )
     {
-        la( ox.to!PX + center );
+        la( eo.to!EA + center );
     }
 
-    void la( PX px, PX _px )
+    void la( EA ea, EA _ea )
     {
-        SDL_RenderDrawLine( renderer, px.x, px.y, _px.x, _px.y );
+        SDL_RenderDrawLine( renderer, ea.x, ea.y, _ea.x, _ea.y );
     }
 
-    void la( OX ox, OX _ox )
+    void la( EO eo, EO _eo )
     {
-        la( ox.to!PX + center, _ox.to!PX + center );
+        la( eo.to!EA + center, _eo.to!EA + center );
     }
 
-    void la( OX ox, OX[] _oxs )
+    void la( EO eo, EO[] _eos )
     {
-        auto px_ = ox.to!PX + center;
-        PX   _px;
+        auto ea_ = eo.to!EA + center;
+        EA   _ea;
 
-        foreach( _ox; _oxs )
+        foreach( _eo; _eos )
         {
-            _px = _ox.to!PX + center;
+            _ea = _eo.to!EA + center;
             
-            la( px_, _px );
+            la( ea_, _ea );
 
-            px_ = _px;
+            ea_ = _ea;
         }
     }
 
-    PX center()
+    EA center()
     {
-        return PX( 640/2, 480/2 );
+        return EA( 640/2, 480/2 );
     }
 }
 
@@ -322,11 +325,11 @@ version(SDL)
         }
 
 
-        auto to(T:PXPX)()
+        auto to(T:EAEA)()
         {
-            PX px_ = PX.fromMPTR( _e.user.data1 );
-            PX _px = PX.fromMPTR( _e.user.data2 );
-            return PXPX( px_, _px );
+            EA ea_ = EA.fromMPTR( _e.user.data1 );
+            EA _ea = EA.fromMPTR( _e.user.data2 );
+            return EAEA( ea_, _ea );
         }
 
         string toString()
@@ -361,7 +364,7 @@ version(SDL)
         D d;
         alias d this;
 
-        this( PXPX rect )
+        this( EAEA rect )
         {        
             d = rect.to!D();
             d.t = DT_LA;
@@ -412,29 +415,29 @@ version(WINDOWS_NATIVE)
 
 
 
-// SX
-// LX
-// PX
+// ES
+// EO
+// EA
 //
 // Sense element 
 //   sensel 
-//   sx
+//   es
 // Location element
 //   locxel
 //   lx
 // picture element
 //   pixel
-//   px
+//   ea
 
-// sx -> lx -> px
+// es -> lx -> ea
 //
-// px -> lx -> sx
+// ea -> lx -> es
 //
-// px
+// ea
 //   640 x 480                      m16 x m16
 // lx 
 //   640.00 x 480.00  fixed 16.16   m32 x m32
-// sx
+// es
 //   640 x 480                      m16 x m16
 
 // Big
@@ -456,7 +459,7 @@ version(WINDOWS_NATIVE)
 
 // Picture
 //   640x480
-//   PX
+//   EA
 
 // World > Picture
 // World = Picture
@@ -466,8 +469,8 @@ version(WINDOWS_NATIVE)
 //   65536x65536 > 640x480
 //     desize World to 640x480  // dec size  // reduce  // desize
 //     crop   World to 640x480
-//     -> 65536x65536 is loxels (location elements). lx. is oxels (o elemets). ox
-//     -> 640x480 is wixels (window elements). wx. is pixel (picture element). px
+//     -> 65536x65536 is leoels (location elements). lx. is eoels (o elemets). eo
+//     -> 640x480 is wixels (window elements). wx. is pixel (picture element). ea
 // World = Picture
 //   65536x65536 = 640x480
 //     ok
@@ -475,27 +478,27 @@ version(WINDOWS_NATIVE)
 //   65536x65536 < 640x480
 //     ok
 
-// ox
-// px
+// eo
+// ea
 
-// ox  // max     detalization
-// px  // picture detalization
-// sx  // sensor  detalization
+// eo  // max     detalization
+// ea  // picture detalization
+// es  // sensor  detalization
 
-// sensor -> sx->ox 
-//   kasx 
-//     1 kasx = 100 ox
+// sensor -> es->eo 
+//   kaes 
+//     1 kaes = 100 eo
 //     1 касание = 100 элементов мира
 //
-// sensor.kasx
-//   sx -> ox
-//   .to!OX
+// sensor.kaes
+//   es -> eo
+//   .to!EO
 
-// sensor - touch - (x,y).sx
-//   sx -> ox
-//     .to!OX
-//       ox = ka * sx  // ka = 1..255
-//   (100x100).ox
+// sensor - touch - (x,y).es
+//   es -> eo
+//     .to!EO
+//       eo = ka * es  // ka = 1..255
+//   (100x100).eo
 
 // sensor element location
 //   depends from sensor detalization
@@ -503,7 +506,7 @@ version(WINDOWS_NATIVE)
 //   touch-screen matrix
 //   mouse move position
 //   mouse position
-struct SX_(X,Y)
+struct ES_(X,Y)
 {
     alias TXY = Detect8bitAlignedType!(X,Y);
 
@@ -517,14 +520,14 @@ struct SX_(X,Y)
         TXY xy;
     }
 
-    auto to(T:OX)()
+    auto to(T:EO)()
     {
-        OX ox;
-        ox.x.h = cast(short)this.x;
-        ox.x.l = 0;
-        ox.y.h = cast(short)this.y;
-        ox.y.l = 0;
-        return ox;
+        EO eo;
+        eo.x.h = cast(short)this.x;
+        eo.x.l = 0;
+        eo.y.h = cast(short)this.y;
+        eo.y.l = 0;
+        return eo;
     }
 
 
@@ -552,7 +555,7 @@ struct SX_(X,Y)
 //   depends from o detalization
 // is: 
 //   world matrix
-struct OX_(X,Y)
+struct EO_(X,Y)
 {
     alias TXY = Detect8bitAlignedType!(X,Y);
 
@@ -566,18 +569,18 @@ struct OX_(X,Y)
         TXY xy;
     }
 
-    void opAssign( PX px )
+    void opAssign( EA ea )
     {
-        // convert PX -> OX
-        x.h = cast(short)px.x;
+        // convert EA -> EO
+        x.h = cast(short)ea.x;
         x.l = 0;
-        y.h = cast(short)px.y;
+        y.h = cast(short)ea.y;
         y.l = 0;
     }
 
-    auto to(T:PX)()
+    auto to(T:EA)()
     {
-        return PX( x.h, y.h );
+        return EA( x.h, y.h );
     }
 
     auto to(T:MPTR)()
@@ -604,7 +607,7 @@ struct OX_(X,Y)
 // is: 
 //   display matrix
 //   picture im memory
-struct PX_(X,Y)
+struct EA_(X,Y)
 {
     enum X_MAX = 640;
     enum Y_MAX = 480;
@@ -624,24 +627,24 @@ struct PX_(X,Y)
     static
     T fromMPTR( MPTR mptr )
     {
-        T px;
-        px.xy = cast(TXY)mptr;
-        return px;
+        T ea;
+        ea.xy = cast(TXY)mptr;
+        return ea;
     }
 
-    auto to(T:PX)()
+    auto to(T:EA)()
     {
         return this;
     }
 
-    auto to(T:OX)()
+    auto to(T:EO)()
     {
-        OX ox;
-        ox.x.h = cast(short)this.x;
-        ox.x.l = 0;
-        ox.y.h = cast(short)this.y;
-        ox.y.l = 0;
-        return ox;
+        EO eo;
+        eo.x.h = cast(short)this.x;
+        eo.x.l = 0;
+        eo.y.h = cast(short)this.y;
+        eo.y.l = 0;
+        return eo;
     }
 
     auto to(T:IX)()
@@ -697,7 +700,7 @@ struct PX_(X,Y)
 
 // index of element
 //   10.ix
-//   (3,3).px = (9).ix = 9
+//   (3,3).ea = (9).ix = 9
 // is:
 //   unique index
 //   UUID
@@ -708,44 +711,44 @@ struct IX_(T)
 {
     T i;
 
-    auto to(T:PX)()
+    auto to(T:EA)()
     {
-        auto y = i / PX.X_MAX;  // integer part
-        auto x = i % PX.X_MAX;  // frac part
+        auto y = i / EA.X_MAX;  // integer part
+        auto x = i % EA.X_MAX;  // frac part
 
-        return PX( x, y );
+        return EA( x, y );
     }
 }
 
 
 version(SDL)
 {
-    alias SX = SX_!( typeof( SDL_MouseMotionEvent.x ), typeof( SDL_MouseMotionEvent.x ) );
-    alias OX = OX_!( Fixed_16_16, Fixed_16_16 );
-    alias PX = PX_!( typeof( SDL_Point.x ), typeof( SDL_Point.y ) );
+    alias ES = ES_!( typeof( SDL_MouseMotionEvent.x ), typeof( SDL_MouseMotionEvent.x ) );
+    alias EO = EO_!( Fixed_16_16, Fixed_16_16 );
+    alias EA = EA_!( typeof( SDL_Point.x ), typeof( SDL_Point.y ) );
     alias IX = IX_!size_t;
 }
 else
 {
-    alias SX = SX_!( M16, M16 );
-    alias OX = OX_!( Fixed_16_16, Fixed_16_16 );
-    alias PX = PX_!( M16, M16 );
+    alias ES = ES_!( M16, M16 );
+    alias EO = EO_!( Fixed_16_16, Fixed_16_16 );
+    alias EA = EA_!( M16, M16 );
     alias IX = IX_!size_t;
 }
 
 
-struct PXPX
+struct EAEA
 {
     union
     {
         struct
         {
-            PX px_;
-            PX _px;
+            EA ea_;
+            EA _ea;
         }
-        TPXPX pxpx;
+        TEAEA eaea;
     }    
-    alias TPXPX = Detect8bitAlignedType!(PX,PX);
+    alias TEAEA = Detect8bitAlignedType!(EA,EA);
 
     // x,y to R1
     // x,y to R1, R2
@@ -753,11 +756,11 @@ struct PXPX
     // x,y to e.user.data1, e.user.data2
     auto to(T:MPTR)()
     {
-        static assert( TPXPX.sizeof <= MPTR.sizeof, "Expect PXPX <= MPTR" );
+        static assert( TEAEA.sizeof <= MPTR.sizeof, "Expect EAEA <= MPTR" );
         return cast(MPTR)xy;
     }
 
-    auto to(T:PXPX)()
+    auto to(T:EAEA)()
     {
         return this;
     }
@@ -768,12 +771,12 @@ struct PXPX
         alias TDATA1 = typeof( d.user.data1 );
         alias TDATA2 = typeof( d.user.data2 );
 
-        if ( TPXPX.sizeof <= TDATA1.sizeof )
-            d.user.data1 = cast(TDATA1)pxpx;
+        if ( TEAEA.sizeof <= TDATA1.sizeof )
+            d.user.data1 = cast(TDATA1)eaea;
         else
         {
-            d.user.data1 = px_.to!TDATA1;
-            d.user.data2 = _px.to!TDATA2;
+            d.user.data1 = ea_.to!TDATA1;
+            d.user.data2 = _ea.to!TDATA2;
         }
 
         return d;
@@ -781,18 +784,18 @@ struct PXPX
 }
 
 
-struct OXOX
+struct EOEO
 {
     union
     {
         struct
         {
-            OX ox_;
-            OX _ox;
+            EO eo_;
+            EO _eo;
         }
-        TOXOX oxox;
+        TEOEO eoeo;
     }    
-    alias TOXOX = Detect8bitAlignedType!(OX,OX);
+    alias TEOEO = Detect8bitAlignedType!(EO,EO);
 
     // x,y to R1
     // x,y to R1, R2
@@ -800,11 +803,11 @@ struct OXOX
     // x,y to e.user.data1, e.user.data2
     auto to(T:MPTR)()
     {
-        static assert( TOXOX.sizeof <= MPTR.sizeof, "Expect OXOX <= MPTR" );
+        static assert( TEOEO.sizeof <= MPTR.sizeof, "Expect EOEO <= MPTR" );
         return cast(MPTR)xy;
     }
 
-    auto to(T:OXOX)()
+    auto to(T:EOEO)()
     {
         return this;
     }
@@ -815,26 +818,26 @@ struct OXOX
         alias TDATA1 = typeof( d.user.data1 );
         alias TDATA2 = typeof( d.user.data2 );
 
-        if ( TOXOX.sizeof <= TDATA1.sizeof )
-            d.user.data1 = cast(TDATA1)oxox;
+        if ( TEOEO.sizeof <= TDATA1.sizeof )
+            d.user.data1 = cast(TDATA1)eoeo;
         else
         {
-            d.user.data1 = ox_.to!TDATA1;
-            d.user.data2 = _ox.to!TDATA2;
+            d.user.data1 = eo_.to!TDATA1;
+            d.user.data2 = _eo.to!TDATA2;
         }
 
         return d;
     }
 
 
-    bool has( OX ox )
+    bool has( EO eo )
     {
         return 
             (
-                (ox.x >= ox_.x) &&
-                (ox.y >= ox_.y) &&
-                (ox.x  < _ox.x) &&
-                (ox.y  < _ox.y)
+                (eo.x >= eo_.x) &&
+                (eo.y >= eo_.y) &&
+                (eo.x  < _eo.x) &&
+                (eo.y  < _eo.y)
             );
     }
 }
